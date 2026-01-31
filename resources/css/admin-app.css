@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    /* KODEBYTE BLUE (#37b5fa) */
+    /* Format: R G B (Tanpa koma, biar bisa pakai opacity modifier di Tailwind) */
+    --color-primary: 55 181 250; 
+}
+
+/* Optional: Custom Scrollbar biar senada sama tombol hitam */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+::-webkit-scrollbar-thumb {
+    background: #1f2937; /* Gray-800 */
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #111827; /* Gray-900 */
+}

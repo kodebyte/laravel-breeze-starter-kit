@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    /* KODEBYTE BLUE (Sama) */
+    --color-primary: 55 181 250; 
+}
