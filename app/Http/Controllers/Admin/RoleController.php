@@ -63,7 +63,7 @@ class RoleController extends Controller implements HasMiddleware
             }
 
             return to_route('admin.roles.index')
-                ->with('status', 'New role created successfully.');
+                ->with('success', 'New role created successfully.');
 
         } catch (\Throwable $e) {
             // Standard Logging
@@ -93,7 +93,7 @@ class RoleController extends Controller implements HasMiddleware
             $role->syncPermissions($request->permissions ?? []);
 
             return to_route('admin.roles.index')
-                ->with('status', 'Role updated successfully.');
+                ->with('success', 'Role updated successfully.');
 
         } catch (\Throwable $e) {
             // Standard Logging
@@ -116,7 +116,7 @@ class RoleController extends Controller implements HasMiddleware
             $role->delete();
 
             return to_route('admin.roles.index')
-                ->with('status', 'Role deleted successfully.');
+                ->with('success', 'Role deleted successfully.');
 
         } catch (\Throwable $e) {
             // Standard Logging

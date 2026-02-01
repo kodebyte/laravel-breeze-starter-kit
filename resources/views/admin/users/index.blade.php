@@ -1,4 +1,4 @@
-<x-admin.layouts.app>
+<x-admin.layouts.app title="User Management">
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div>

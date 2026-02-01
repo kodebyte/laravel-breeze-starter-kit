@@ -1,4 +1,4 @@
-<x-admin.layouts.app>
+<x-admin.layouts.app title="Add New Employee">
     <x-slot name="header">
         <x-admin.ui.breadcrumb :links="['Employees' => route('admin.employees.index'), 'Add New' => '#']" />
         <h2 class="font-bold text-xl text-gray-900 leading-tight">Add New Employee</h2>
@@ -48,15 +48,15 @@
 
                 <div class="md:col-span-2 border-t border-gray-100 my-2"></div>
 
-                {{-- 4. Password --}}
-                <x-admin.form.group label="Password" name="password" required>
-                    <x-admin.form.input type="password" name="password" required placeholder="Min. 8 characters" />
-                </x-admin.form.group>
-
-                <x-admin.form.group label="Confirm Password" name="password_confirmation" required>
-                    <x-admin.form.input type="password" name="password_confirmation" required placeholder="Re-type password" />
-                </x-admin.form.group>
-
+                <div class="md:col-span-2 bg-blue-50/50 border border-blue-100 p-4 rounded-xl flex items-start gap-3 mt-2">
+                    <div class="p-2 bg-white rounded-lg shadow-sm">
+                        <x-admin.icon.info class="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-gray-900 leading-none mb-1">Automated Security</h4>
+                        <p class="text-xs text-gray-500">The system will generate a secure random password and send it directly to the employee's email address.</p>
+                    </div>
+                </div>
             </div>
 
             <div class="mt-8 pt-6 border-t border-gray-100 flex justify-end gap-4">

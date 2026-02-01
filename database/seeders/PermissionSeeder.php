@@ -31,6 +31,9 @@ class PermissionSeeder extends Seeder
             
             // Module: Role & Access (Sensitive)
             'roles' => ['view', 'create', 'update', 'delete'],
+
+            // Module: Acvitity Logs
+            'logs' => ['view'],
         ];
 
         // 3. Create Permissions Loop

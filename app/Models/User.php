@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Traits\HasActivityLogs;
 use App\Traits\HasFilters;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,7 +14,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasRoles, HasFilters, SoftDeletes;
+    use HasFactory, Notifiable, HasRoles, HasFilters, HasActivityLogs, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.

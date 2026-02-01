@@ -8,10 +8,7 @@ trait HasFilters
 {
     /**
      * Apply search and sort filters dynamically.
-     *
-     * @param Builder $query
-     * @param array $filters (Input dari request: search, sort, direction)
-     * @return Builder
+     * Support Standard Relations and Polymorphic Relations (causer).
      */
     public function scopeFilter(Builder $query, array $filters)
     {
@@ -21,14 +18,24 @@ trait HasFilters
             
             $query->where(function ($q) use ($search) {
                 foreach ($this->searchable as $key => $column) {
-                    // Support search di relasi (misal: 'roles.name')
+                    
+                    // Support search di relasi (misal: 'causer.name' atau 'roles.name')
                     if (str_contains($column, '.')) {
                         [$relation, $field] = explode('.', $column);
-                        $q->orWhereHas($relation, function ($subQ) use ($field, $search) {
-                            $subQ->where($field, 'like', "%{$search}%");
-                        });
+
+                        // KHUSUS: Handle Polymorphic Causer (Activity Logs)
+                        if ($relation === 'causer') {
+                            $q->orWhereHasMorph($relation, ['App\Models\Employee', 'App\Models\User'], function ($subQ) use ($field, $search) {
+                                $subQ->where($field, 'like', "%{$search}%");
+                            });
+                        } else {
+                            // Relasi Standar (BelongsTo, HasOne, dll)
+                            $q->orWhereHas($relation, function ($subQ) use ($field, $search) {
+                                $subQ->where($field, 'like', "%{$search}%");
+                            });
+                        }
                     } else {
-                        // Search kolom biasa
+                        // Search kolom biasa di tabel utama
                         if ($key === 0) {
                             $q->where($column, 'like', "%{$search}%");
                         } else {
@@ -40,11 +47,9 @@ trait HasFilters
         }
 
         // 2. Logic Sort
-        // Cek apakah kolom yang mau disort ada di $searchable atau diizinkan (bisa ditambah property $sortable kalau mau strict)
         if (isset($filters['sort']) && isset($filters['direction'])) {
             $query->orderBy($filters['sort'], $filters['direction']);
         } else {
-            // Default Sort (bisa di-override di Model kalau mau)
             $query->latest();
         }
 

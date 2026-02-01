@@ -1,0 +1,7 @@
+<svg {{ $attributes->merge(['class' => 'inline-block']) }} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4.1a1 1 0 0 0-1.4 0l-2.1 2.1a1 1 0 0 0 0 1.4Z"/>
+    <path d="m15.5 7.5-10 10"/>
+    <path d="m13.5 13.5 2 2"/>
+    <path d="m5 15.5 2 2"/>
+    <circle cx="7.5" cy="15.5" r="5.5"/>
+</svg>

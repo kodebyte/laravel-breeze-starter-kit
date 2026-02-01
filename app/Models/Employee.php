@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\EmployeeStatus;
+use App\Traits\HasActivityLogs;
 use App\Traits\HasFilters;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -12,7 +13,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class Employee extends Authenticatable
 {
-    use HasFactory, Notifiable, SoftDeletes, HasRoles, HasFilters, SoftDeletes;
+    use HasFactory, Notifiable, HasRoles, HasFilters, HasActivityLogs, SoftDeletes;
 
     protected $guard_name = 'employee'; 
 
@@ -21,6 +22,7 @@ class Employee extends Authenticatable
         'name',
         'email',
         'password',
+        'must_change_password',
         'status',
     ];
 
@@ -39,6 +41,7 @@ class Employee extends Authenticatable
     {
         return [
             'password' => 'hashed',
+            'must_change_password' => 'boolean',
             'status' => EmployeeStatus::class
         ];
     }

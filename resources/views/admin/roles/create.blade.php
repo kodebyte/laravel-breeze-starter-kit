@@ -1,4 +1,4 @@
-<x-admin.layouts.app>
+<x-admin.layouts.app title="Add New Role">
     <x-slot name="header">
         <x-admin.ui.breadcrumb :links="['Roles' => route('admin.roles.index'), 'Add New' => '#']" />
         <h2 class="font-bold text-xl text-gray-900 leading-tight">Add New Role</h2>

@@ -1,4 +1,4 @@
-<x-admin.layouts.app>
+<x-admin.layouts.app title="Edit Employee">
     <x-slot name="header">
         <x-admin.ui.breadcrumb :links="['Employees' => route('admin.employees.index'), 'Edit' => '#']" />
         <h2 class="font-bold text-xl text-gray-900 leading-tight">
@@ -65,6 +65,14 @@
                 <x-admin.form.group label="Confirm New Password" name="password_confirmation">
                     <x-admin.form.input type="password" name="password_confirmation" placeholder="Re-type password" />
                 </x-admin.form.group>
+
+                {{-- Tambahkan Checkbox ini, Bro! --}}
+                <div class="md:col-span-2 flex items-center mt-2">
+                    <x-admin.form.checkbox id="must_change_password" name="must_change_password" value="1" />
+                    <label for="must_change_password" class="ml-2 block text-sm text-gray-600 font-medium">
+                        Force user to change password on next login
+                    </label>
+                </div>
             </div>
 
             <div class="mt-8 pt-6 border-t border-gray-100 flex justify-end gap-4">

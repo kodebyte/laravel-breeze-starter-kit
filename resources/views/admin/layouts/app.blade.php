@@ -1,3 +1,5 @@
+@props(['title'])
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -5,7 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }} Admin</title>
+        <title>{{ isset($title) ? $title . ' | ' : config('app.name', 'Laravel')  . ' | ' }} Kodebyte Admin</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -57,13 +59,6 @@
 
                 <main class="flex-1">
                     <div class="py-6 md:py-8"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                            @if(session('error'))
-                                <div class="mb-6 p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm font-medium flex items-center shadow-sm">
-                                    <svg class="w-5 h-5 mr-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                    {{ session('error') }}
-                                </div>
-                            @endif
-
                             {{ $slot }}
                         </div>
                     </div>

@@ -5,8 +5,9 @@
         timer: null,
         progress: 100,
         init() {
-            @if(session('status'))
-                this.showToast('{{ session('status') }}', 'success');
+            {{-- Mengubah session('status') menjadi session('success') agar konsisten --}}
+            @if(session('success'))
+                this.showToast('{{ session('success') }}', 'success');
             @elseif(session('error'))
                 this.showToast('{{ session('error') }}', 'error');
             @endif

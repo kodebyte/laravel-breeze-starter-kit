@@ -25,33 +25,20 @@ class UpdateEmployeeRequest extends FormRequest
      */
     public function rules(): array
     {
-        // Ambil ID employee dari route untuk ignore validasi unique
-        $employeeId = $this->route('employee')->id;
+        $employeeId = $this->route('employee')->id; // Ambil ID karyawan dari route
 
         return [
-            // Cek unik identifier tapi abaikan data milik sendiri
-            'identifier' => [
-                'required', 
-                'string', 
-                'max:50', 
-                Rule::unique('employees')->ignore($employeeId)
-            ],
-            
+            'identifier' => ['required', 'string', Rule::unique('employees')->ignore($employeeId)],
             'name' => ['required', 'string', 'max:255'],
-            'email' => [
-                'required', 
-                'string', 
-                'lowercase', 
-                'email', 
-                'max:255', 
-                Rule::unique('employees')->ignore($employeeId)
-            ],
-            
+            'email' => ['required', 'email', Rule::unique('employees')->ignore($employeeId)],
             'role' => ['required', 'exists:roles,name'],
-            'status' => ['required', new Enum(EmployeeStatus::class)],
-            
-            // Password jadi nullable pas update, diisi cuma kalau mau ganti
-            'password' => ['nullable', 'confirmed', Password::defaults()],
+            'status' => ['required', Rule::enum(EmployeeStatus::class)],
+            'password' => [
+                'nullable', 
+                'confirmed', 
+                Password::min(8)->letters()->numbers()
+            ],
+            'must_change_password' => ['nullable', 'boolean'],
         ];
     }
 }

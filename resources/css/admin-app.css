@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Sembunyiin elemen yang punya atribut x-cloak sebelum Alpine siap */
+[x-cloak] { 
+    display: none !important; 
+}
+
 :root {
     /* KODEBYTE BLUE (#37b5fa) */
     /* Format: R G B (Tanpa koma, biar bisa pakai opacity modifier di Tailwind) */

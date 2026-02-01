@@ -1,7 +1,12 @@
+@props([
+    'colspan' => 1, 
+    'createRoute' => null
+])
+
 @php
     // Cek apakah ada aktivitas pencarian
     $isSearching = request()->filled('search');
-    
+
     // Tentukan konten berdasarkan kondisi
     $currentTitle = $isSearching ? 'No results found' : 'No data available';
     $currentMessage = $isSearching 

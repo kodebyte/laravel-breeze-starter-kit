@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admi\User\StoreUserRequest;
+use App\Http\Requests\Admin\User\StoreUserRequest;
 use App\Http\Requests\Admin\User\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -55,7 +55,7 @@ class UserController extends Controller implements HasMiddleware
             ]);
 
             return to_route('admin.users.index')
-                    ->with('status', 'User created successfully!');
+                    ->with('success', 'User created successfully!');
 
         } catch (\Throwable $e) {
             \Log::error('Error creating user: ' . $e->getMessage());
@@ -84,7 +84,7 @@ class UserController extends Controller implements HasMiddleware
             $user->save(); // Single Query Save
 
             return to_route('admin.users.index')
-                    ->with('status', 'User updated successfully!');
+                    ->with('success', 'User updated successfully!');
 
         } catch (\Throwable $e) {
             \Log::error('Error updating user ID ' . $user->id . ': ' . $e->getMessage());
@@ -99,7 +99,7 @@ class UserController extends Controller implements HasMiddleware
             $user->delete();
             
             return to_route('admin.users.index')
-                    ->with('status', 'User deleted.')
+                    ->with('success', 'User deleted.')
                     ->with('undo_route', route('admin.users.restore', $user->id));
 
         } catch (\Throwable $e) {
@@ -117,7 +117,7 @@ class UserController extends Controller implements HasMiddleware
             $user->restore();
 
             return to_route('admin.users.index')
-                    ->with('status', 'User has been restored.');
+                    ->with('success', 'User has been restored.');
                 
         } catch (\Throwable $e) {
             \Log::error('Error updating user ID ' . $id . ': ' . $e->getMessage());
