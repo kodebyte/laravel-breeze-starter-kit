@@ -2,6 +2,10 @@
 
 use App\Http\Controllers\Admin as Admin;
 
+Route::get('template', function() {
+    return view('admin.templates.index');
+});
+
 // --- GUEST ROUTES (Belum Login) ---
 Route::middleware('guest:employee')->group(function () {
     
@@ -42,6 +46,9 @@ Route::middleware(['auth:employee', 'force.change.password'])->group(function ()
     // Profile Routes
     Route::get('/profile', [Admin\ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [Admin\ProfileController::class, 'update'])->name('profile.update');
+
+    Route::get('/settings', [Admin\SettingController::class, 'index'])->name('settings.index');
+    Route::patch('/settings', [Admin\SettingController::class, 'update'])->name('settings.update');
 
     // unlock employee
     Route::patch('/employees/{employee}/unlock', [Admin\EmployeeController::class, 'unlock'])->name('employees.unlock');

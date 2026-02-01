@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\EmployeeStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
+use App\Models\Setting;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Illuminate\View\View;
@@ -28,9 +30,9 @@ class DashboardController extends Controller implements HasMiddleware
         // 1. Statistik Utama
         $stats = [
             'total_employees' => Employee::count(),
-            'total_users'     => User::count(),
-            'total_roles'     => Role::where('guard_name', 'employee')->count(),
-            'active_staff'    => Employee::where('status', \App\Enums\EmployeeStatus::ACTIVE)->count(),
+            'active_employees' => Employee::where('status', EmployeeStatus::ACTIVE)->count(),
+            'locked_accounts' => Employee::where('failed_login_attempts', '>=', 5)->count(), // Yg kena auto-lock
+            'system_status' => Setting::get('maintenance_mode') ? 'Maintenance' : 'Live',
         ];
 
         // 2. Data Terbaru (Recent Employees)

@@ -1,27 +1,40 @@
 <x-admin.layouts.app title="Profile Settings">
     <x-slot name="header">
-        <x-admin.ui.breadcrumb :links="['Profile Settings' => '#']" />
-        <h2 class="font-bold text-xl text-gray-900 leading-tight">
-            My Profile
-        </h2>
+        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div>
+                <x-admin.ui.breadcrumb :links="[
+                    'Profile Settings' => '#'
+                ]" />
+                <h2 class="font-bold text-xl text-gray-900 leading-tight">
+                    My Profile
+                </h2>
+            </div>
+        </div>
     </x-slot>
 
-    <div class="bg-white p-8 rounded-xl border border-gray-100 shadow-sm">
-        <form method="POST" action="{{ route('admin.profile.update') }}">
-            @csrf
-            @method('PUT')
+    <form method="POST" action="{{ route('admin.profile.update') }}">
+        @csrf
+        @method('PUT')
 
-            {{-- Ganti Grid jadi Stacked (Satu Kolom) --}}
-            <div class="space-y-12">
+        {{-- SINGLE CARD LAYOUT --}}
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            
+            <div class="p-6 space-y-8">
                 
-                {{-- SECTION 1: Informasi Dasar --}}
-                <div class="space-y-6">
-                    <div class="border-b border-gray-50 pb-2">
-                        <h3 class="text-lg font-bold text-gray-900">Basic Information</h3>
-                        <p class="text-xs text-gray-400">Update your account's profile information and email address.</p>
+                {{-- SECTION 1: BASIC INFORMATION --}}
+                <div>
+                    {{-- Header dengan Icon Biru (User) --}}
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="p-2 bg-blue-50 text-primary rounded-lg">
+                            <x-admin.icon.user-circle class="w-5 h-5" />
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-900">Basic Information</h3>
+                            <p class="text-xs text-gray-500">Update your account's profile information and email address.</p>
+                        </div>
                     </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <x-admin.form.group label="Full Name" name="name" required>
                             <x-admin.form.input name="name" :value="old('name', $employee->name)" required />
                         </x-admin.form.group>
@@ -32,14 +45,23 @@
                     </div>
                 </div>
 
-                {{-- SECTION 2: Keamanan (Password) --}}
-                <div class="space-y-6">
-                    <div class="border-b border-gray-50 pb-2">
-                        <h3 class="text-lg font-bold text-gray-900">Security</h3>
-                        <p class="text-xs text-gray-500 italic">Leave password fields blank if you don't want to change it.</p>
+                {{-- PEMISAH ANTAR SECTION --}}
+                <div class="border-t border-gray-100"></div>
+
+                {{-- SECTION 2: SECURITY --}}
+                <div>
+                    {{-- Header dengan Icon Orange (Lock) --}}
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="p-2 bg-orange-50 text-orange-600 rounded-lg">
+                            <x-admin.icon.lock class="w-5 h-5" />
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-900">Security</h3>
+                            <p class="text-xs text-gray-500">Leave password fields blank if you don't want to change it.</p>
+                        </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <x-admin.form.group label="New Password" name="password">
                             <x-admin.form.input type="password" name="password" autocomplete="new-password" placeholder="Min. 8 characters" />
                         </x-admin.form.group>
@@ -52,9 +74,13 @@
 
             </div>
 
-            <div class="mt-12 pt-6 border-t border-gray-100 flex justify-end">
-                <x-admin.ui.button>Update Profile</x-admin.ui.button>
+            {{-- FOOTER CARD (Konsisten dengan form lain) --}}
+            <div class="bg-gray-50 px-6 py-4 border-t border-gray-100 flex items-center justify-end">
+                <x-admin.ui.button type="submit">
+                    Update Profile
+                </x-admin.ui.button>
             </div>
-        </form>
-    </div>
+            
+        </div>
+    </form>
 </x-admin.layouts.app>

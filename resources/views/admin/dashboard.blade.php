@@ -10,51 +10,57 @@
         {{-- 1. STATS CARDS GRID --}}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             
-            {{-- Total Employees --}}
-            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
-                <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
-                    <x-admin.icon.briefcase class="w-6 h-6" />
-                </div>
+            {{-- Card 1: Total Employees --}}
+            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between group hover:border-primary/50 transition-colors">
                 <div>
-                    <p class="text-sm text-gray-500 font-medium">Total Employees</p>
-                    <h3 class="text-2xl font-bold text-gray-900">{{ $stats['total_employees'] }}</h3>
+                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Staff</p>
+                    <p class="text-2xl font-black text-gray-900 mt-1">{{ $stats['total_employees'] }}</p>
+                </div>
+                <div class="p-3 bg-blue-50 text-blue-600 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                    <x-admin.icon.users class="w-6 h-6" />
                 </div>
             </div>
 
-            {{-- Active Staff --}}
-            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
-                <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            {{-- Card 2: Active Employees --}}
+            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between group hover:border-green-300 transition-colors">
+                <div>
+                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Active Now</p>
+                    <p class="text-2xl font-black text-gray-900 mt-1">{{ $stats['active_employees'] }}</p>
+                </div>
+                <div class="p-3 bg-green-50 text-green-600 rounded-lg group-hover:bg-green-600 group-hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
+            </div>
+
+            {{-- Card 3: Security Alerts (Locked Accounts) --}}
+            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between group hover:border-red-300 transition-colors">
                 <div>
-                    <p class="text-sm text-gray-500 font-medium">Active Staff</p>
-                    <h3 class="text-2xl font-bold text-gray-900">{{ $stats['active_staff'] }}</h3>
+                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Locked Accounts</p>
+                    <p class="text-2xl font-black {{ $stats['locked_accounts'] > 0 ? 'text-red-600' : 'text-gray-900' }} mt-1">
+                        {{ $stats['locked_accounts'] }}
+                    </p>
+                </div>
+                <div class="p-3 {{ $stats['locked_accounts'] > 0 ? 'bg-red-50 text-red-600 animate-pulse' : 'bg-gray-50 text-gray-400' }} rounded-lg">
+                    <x-admin.icon.lock class="w-6 h-6" />
                 </div>
             </div>
 
-            {{-- Total Clients/Users --}}
-            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
-                <div class="p-3 bg-purple-50 text-purple-600 rounded-lg">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                </div>
+            {{-- Card 4: System Status --}}
+            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between group hover:border-orange-300 transition-colors">
                 <div>
-                    <p class="text-sm text-gray-500 font-medium">Total Clients</p>
-                    <h3 class="text-2xl font-bold text-gray-900">{{ $stats['total_users'] }}</h3>
+                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">System Mode</p>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="relative flex h-3 w-3">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full {{ $stats['system_status'] == 'Live' ? 'bg-green-400' : 'bg-red-400' }} opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-3 w-3 {{ $stats['system_status'] == 'Live' ? 'bg-green-500' : 'bg-red-500' }}"></span>
+                        </span>
+                        <p class="text-lg font-bold text-gray-900">{{ $stats['system_status'] }}</p>
+                    </div>
                 </div>
-            </div>
-
-            {{-- Total Roles --}}
-            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
-                <div class="p-3 bg-amber-50 text-amber-600 rounded-lg">
-                    <x-admin.icon.shield class="w-6 h-6" />
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">System Roles</p>
-                    <h3 class="text-2xl font-bold text-gray-900">{{ $stats['total_roles'] }}</h3>
+                <div class="p-3 bg-orange-50 text-orange-600 rounded-lg">
+                    <x-admin.icon.settings class="w-6 h-6" />
                 </div>
             </div>
 

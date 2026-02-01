@@ -34,6 +34,9 @@ class PermissionSeeder extends Seeder
 
             // Module: Acvitity Logs
             'logs' => ['view'],
+
+            // Module: Settings
+            'settings' => ['view']
         ];
 
         // 3. Create Permissions Loop

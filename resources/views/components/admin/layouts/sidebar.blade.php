@@ -2,15 +2,18 @@
     
     {{-- 1. HEADER: Logo & Notification Bell --}}
     <div class="h-16 flex items-center justify-between px-5 border-b border-gray-100">
-        {{-- LOGO (Sisi Kiri) --}}
         <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 group">
             <div class="bg-gray-900 text-white p-1 rounded group-hover:bg-primary transition-colors">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
+                @if(\App\Models\Setting::get('logo_light'))
+                    <img src="{{ asset('storage/' . \App\Models\Setting::get('logo_light')) }}" class="w-5 h-5 object-contain" alt="Logo">
+                @else
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                @endif
             </div>
             <span class="text-lg font-bold tracking-tight text-gray-900">
-                Master<span class="text-primary">Kit</span>
+                {{ \App\Models\Setting::get('site_name', 'MasterKit') }}
             </span>
         </a>
 
@@ -133,9 +136,19 @@
         </x-admin.layouts.sidebar-link>
 
         <div class="pt-6 mb-2 px-3 text-xs font-bold text-gray-400 uppercase tracking-wider"
-            x-show="'activity logs system history audit'.includes(searchMenu.toLowerCase())">
+            x-show="'activity logs system history audit settings general'.includes(searchMenu.toLowerCase())">
             System
         </div>
+
+        @can('settings.view')
+            <x-admin.layouts.sidebar-link 
+                :href="route('admin.settings.index')" 
+                :active="request()->routeIs('admin.settings.*')" 
+                title="General Settings"
+                x-show="'settings general identity logo site'.includes(searchMenu.toLowerCase())">
+                <x-admin.icon.settings class="w-5 h-5" />
+            </x-admin.layouts.sidebar-link>
+        @endcan
 
         @can('logs.view')
             <x-admin.layouts.sidebar-link 
@@ -143,10 +156,7 @@
                 :active="request()->routeIs('admin.logs.*')" 
                 title="Activity Logs"
                 x-show="'activity logs system history audit'.includes(searchMenu.toLowerCase())">
-                
-                {{-- Icon: Menggunakan komponen icon yang sudah kita pecah --}}
                 <x-admin.icon.clock-rewind class="w-5 h-5" />
-
             </x-admin.layouts.sidebar-link>
         @endcan
 
@@ -156,7 +166,8 @@
                     !'employees staff internal'.includes(searchMenu.toLowerCase()) &&
                     !'roles permissions access'.includes(searchMenu.toLowerCase()) &&
                     !'user profile settings account password me'.includes(searchMenu.toLowerCase()) &&
-                    !'activity logs system history audit'.includes(searchMenu.toLowerCase())
+                    !'activity logs system history audit'.includes(searchMenu.toLowerCase()) &&
+                    !'settings general identity logo site'.includes(searchMenu.toLowerCase())
                     "
              class="px-3 py-10 text-center text-xs text-gray-400 italic">
             Menu not found...
