@@ -3,36 +3,48 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admi\User\StoreUserRequest;
+use App\Http\Requests\Admin\User\UpdateUserRequest;
 use App\Models\User;
-use App\Http\Requests\Admin\StoreUserRequest;
-use App\Http\Requests\Admin\UpdateUserRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 
 // Note: Gak perlu 'use DB' lagi
 
-class UserController extends Controller
+class UserController extends Controller implements HasMiddleware
 {
-    public function index(Request $request)
+    public static function middleware(): array
     {
-        $perPage = $this->getPerPage();
+        return [
+            new Middleware('permission:users.view', only: ['index']),
+            new Middleware('permission:users.create', only: ['create', 'store']),
+            new Middleware('permission:users.update', only: ['edit', 'update']),
+            new Middleware('permission:users.delete', only: ['destroy']),
+            new Middleware('permission:users.restore', only: ['restore']),
+        ];
+    }
 
+    public function index(Request $request): View
+    {
         $users = User::query() // Gak ada with('roles') lagi
-            ->filter($request->only(['search', 'sort', 'direction']))
-            ->cursorPaginate($perPage)
-            ->withQueryString();
+                    ->filter($request->only(['search', 'sort', 'direction']))
+                    ->cursorPaginate($this->getPerPage())
+                    ->withQueryString();
 
         return view('admin.users.index', compact('users'));
     }
 
-    public function create()
+    public function create(): View
     {
         // Gak perlu kirim $roles lagi ke view
         return view('admin.users.create');
     }
 
-    public function store(StoreUserRequest $request)
+    public function store(StoreUserRequest $request): RedirectResponse
     {
         try {
             // SINGLE QUERY: Langsung Create aja
@@ -43,21 +55,22 @@ class UserController extends Controller
             ]);
 
             return to_route('admin.users.index')
-                ->with('status', 'User created successfully!');
+                    ->with('status', 'User created successfully!');
 
         } catch (\Throwable $e) {
-            Log::error('Error creating user: ' . $e->getMessage());
+            \Log::error('Error creating user: ' . $e->getMessage());
+
             return back()->withInput()->with('error', 'Failed to create user.');
         }
     }
 
-    public function edit(User $user)
+    public function edit(User $user): View
     {
         // Gak perlu kirim $roles
         return view('admin.users.edit', compact('user'));
     }
 
-    public function update(UpdateUserRequest $request, User $user)
+    public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
         try {
             // SINGLE PROCESS: Update atribut
@@ -71,26 +84,45 @@ class UserController extends Controller
             $user->save(); // Single Query Save
 
             return to_route('admin.users.index')
-                ->with('status', 'User updated successfully!');
+                    ->with('status', 'User updated successfully!');
 
         } catch (\Throwable $e) {
-            Log::error('Error updating user ID ' . $user->id . ': ' . $e->getMessage());
+            \Log::error('Error updating user ID ' . $user->id . ': ' . $e->getMessage());
+
             return back()->withInput()->with('error', 'Failed to update user.');
         }
     }
 
-    public function destroy(User $user)
+    public function destroy(User $user): RedirectResponse
     {
         try {
-            // SINGLE QUERY: Delete
             $user->delete();
+            
+            return to_route('admin.users.index')
+                    ->with('status', 'User deleted.')
+                    ->with('undo_route', route('admin.users.restore', $user->id));
+
+        } catch (\Throwable $e) {
+            \Log::error('Error delete user ID ' . $user->id . ': ' . $e->getMessage());
+
+            return back()->with('error', 'Failed to delete user.');
+        }
+    }
+
+    // Method Baru: Restore
+    public function restore(string $id): RedirectResponse
+    {
+        try {
+            $user = User::withTrashed()->findOrFail($id);
+            $user->restore();
 
             return to_route('admin.users.index')
-                ->with('status', 'User deleted successfully!');
+                    ->with('status', 'User has been restored.');
                 
         } catch (\Throwable $e) {
-            Log::error('Error deleting user ID ' . $user->id . ': ' . $e->getMessage());
-            return back()->with('error', 'Failed to delete user.');
+            \Log::error('Error updating user ID ' . $id . ': ' . $e->getMessage());
+
+            return back()->with('error', 'Failed to restore user.');
         }
     }
 }

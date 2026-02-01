@@ -27,7 +27,13 @@ Route::middleware('auth:employee')->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 
+    // restore delete
+    Route::post('users/{id}/restore', [Admin\UserController::class, 'restore'])->name('users.restore');
+    Route::post('employees/{id}/restore', [Admin\EmployeeController::class, 'restore'])->name('employees.restore');
+
     Route::resources([
-        'users' => Admin\UserController::class
+        'users' => Admin\UserController::class,
+        'employees' => Admin\EmployeeController::class,
+        'roles' => Admin\RoleController::class,
     ]);
 });

@@ -13,6 +13,7 @@
         @vite(['resources/css/admin-app.css', 'resources/js/admin-app.js'])
     </head>
     <body class="font-sans antialiased bg-gray-50">
+        <x-admin.ui.toast />
         
         <div x-data="{ sidebarOpen: false }" class="flex h-screen overflow-hidden bg-gray-50">
 
@@ -56,14 +57,6 @@
 
                 <main class="flex-1">
                     <div class="py-6 md:py-8"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                            
-                            @if(session('status'))
-                                <div class="mb-6 p-4 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm font-medium flex items-center shadow-sm">
-                                    <svg class="w-5 h-5 mr-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                    {{ session('status') }}
-                                </div>
-                            @endif
-
                             @if(session('error'))
                                 <div class="mb-6 p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm font-medium flex items-center shadow-sm">
                                     <svg class="w-5 h-5 mr-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>

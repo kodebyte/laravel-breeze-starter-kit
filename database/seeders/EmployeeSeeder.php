@@ -22,6 +22,7 @@ class EmployeeSeeder extends Seeder
 
         // 2. Create Employee Account
         $employee = \App\Models\Employee::create([
+            'identifier' => 'KB001',
             'name' => 'Bro Li',
             'email' => 'admin@kodebyte.com',
             'password' => bcrypt('password'),

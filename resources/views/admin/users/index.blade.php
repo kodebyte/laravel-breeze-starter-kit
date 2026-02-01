@@ -5,14 +5,16 @@
                 <x-admin.ui.breadcrumb :links="['Users' => '#']" />
                     
                 <h2 class="font-bold text-xl text-gray-900 leading-tight">
-                    {{ __('User Management') }}
+                    User Management
                 </h2>
             </div>
 
-            <x-admin.ui.link-button href="{{ route('admin.users.create') }}">
-                <x-admin.icon.plus class="w-4 h-4 mr-2" />
-                Add New
-            </x-admin.ui.link-button>
+            @can('users.create')
+                <x-admin.ui.link-button href="{{ route('admin.users.create') }}">
+                    <x-admin.icon.plus class="w-4 h-4 mr-2" />
+                    Add New User
+                </x-admin.ui.link-button>
+            @endcan
         </div>
     </x-slot>
 
@@ -73,20 +75,25 @@
 
                             {{-- 5. ACTIONS (Edit & Delete) --}}
                             <x-admin.table.td class="text-right font-medium">
-                                <div class="opacity-0 group-hover:opacity-100 transition-opacity flex justify-end gap-3">
-                                    
+                                <div class="flex justify-end gap-3">
                                     {{-- Tombol Edit --}}
-                                    <x-admin.ui.action-edit :href="route('admin.users.edit', $user)" />
+                                    @can('users.update')
+                                        <x-admin.ui.action-edit :href="route('admin.users.edit', $user)" />
+                                    @endcan
                                     
-                                    {{-- Tombol Delete (Gak perlu nulis form manual lagi!) --}}
-                                    <x-admin.ui.action-delete :action="route('admin.users.destroy', $user)" />
-
+                                    @can('users.delete')
+                                        {{-- Tombol Delete (Gak perlu nulis form manual lagi!) --}}
+                                        <x-admin.ui.action-delete :action="route('admin.users.destroy', $user)" />
+                                    @endcan
                                 </div>
                             </x-admin.table.td>
 
                         </x-admin.table.tr>
                     @empty
-                        <tr><td colspan="5" class="px-6 py-10 text-center text-gray-500">No data found.</td></tr>
+                        <x-admin.table.empty 
+                            colspan="5" 
+                            :create-route="auth()->user()->can('users.create') ? route('admin.users.create') : null" 
+                        />
                     @endforelse
                 </x-admin.table.tbody>
             </x-admin.table>
