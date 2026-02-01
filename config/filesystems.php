@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Setting;
+
 return [
 
     /*
@@ -58,6 +60,14 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
             'report' => false,
+        ],
+
+        'google' => [
+            'driver' => 'google',
+            'clientId' => Setting::get('backup_google_client_id'),
+            'clientSecret' => Setting::get('backup_google_client_secret'),
+            'refreshToken' => Setting::get('backup_google_refresh_token'),
+            'folderId' => Setting::get('backup_google_folder_id'),
         ],
 
     ],

@@ -153,6 +153,78 @@
                     </div>
                 </div>
 
+                {{-- PEMISAH ANTAR SECTION --}}
+                <div class="border-t border-gray-100"></div>
+
+                {{-- SECTION 5: AUTOMATED BACKUP & CLOUD STORAGE --}}
+                <div>
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+                            {{-- Icon Cloud --}}
+                            <x-admin.icon.cloud-upload class="w-5 h-5" />
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-900">Automated Backup & Cloud Storage</h3>
+                            <p class="text-xs text-gray-500">Configure daily automation and Google Drive integration (Dual Backup).</p>
+                        </div>
+                    </div>
+
+                    {{-- Alert USP --}}
+                    <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mb-6 flex items-start gap-3">
+                        <x-admin.icon.shield-check class="w-5 h-5 text-indigo-600 mt-0.5" />
+                        <div>
+                            <h4 class="text-sm font-bold text-indigo-900">Why Enable Dual Backup?</h4>
+                            <p class="text-xs text-indigo-700 mt-1">
+                                Protect your data against server failures or ransomware. Backups will be stored locally AND automatically uploaded to your designated Google Drive.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        {{-- Enable/Disable Automation --}}
+                        <div class="md:col-span-2">
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+                                <div>
+                                    <label for="backup_automation" class="font-bold text-gray-900 text-sm">Enable Daily Automated Backup</label>
+                                    <p class="text-xs text-gray-500">System will run backup every day at 00:00.</p>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="hidden" name="backup_daily_active" value="0">
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" name="backup_daily_active" value="1" class="sr-only peer" 
+                                            {{ \App\Models\Setting::get('backup_daily_active') ? 'checked' : '' }}>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Google Drive Credentials --}}
+                        <div class="md:col-span-2 mt-2">
+                            <h4 class="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                <svg class="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12.01 1.984C8.938 1.984 6.22 3.613 4.69 6.03l2.677 4.636h14.07c0-.053.01-.1.01-.155 0-4.735-3.836-8.527-8.527-8.527h-.91zM5.56 7.55L1.8 14.066c-.63 1.09-.99 2.348-.99 3.687 0 2.15 1.06 4.07 2.69 5.286l4.637-8.035H5.56zm12.333 1.133l-2.65 4.59h-5.3L5.305 21.14c1.865 1.037 4.02 1.636 6.32 1.636 6.78 0 12.33-5.093 13.19-11.66h-7.243z"/></svg>
+                                Google Drive Configuration
+                            </h4>
+                        </div>
+
+                        <x-admin.form.group label="Google Client ID" name="backup_google_client_id">
+                            <x-admin.form.input name="backup_google_client_id" :value="\App\Models\Setting::get('backup_google_client_id')" placeholder="xxxxxx.apps.googleusercontent.com" />
+                        </x-admin.form.group>
+
+                        <x-admin.form.group label="Google Client Secret" name="backup_google_client_secret">
+                            <x-admin.form.input type="password" name="backup_google_client_secret" :value="\App\Models\Setting::get('backup_google_client_secret')" placeholder="Secret Key" />
+                        </x-admin.form.group>
+
+                        <x-admin.form.group label="Google Refresh Token" name="backup_google_refresh_token">
+                            <x-admin.form.input type="password" name="backup_google_refresh_token" :value="\App\Models\Setting::get('backup_google_refresh_token')" placeholder="Refresh Token" />
+                        </x-admin.form.group>
+
+                        <x-admin.form.group label="Folder ID (Optional)" name="backup_google_folder_id">
+                            <x-admin.form.input name="backup_google_folder_id" :value="\App\Models\Setting::get('backup_google_folder_id')" placeholder="Folder ID from URL" />
+                        </x-admin.form.group>
+                    </div>
+                </div>
             </div>
 
             {{-- FOOTER CARD --}}

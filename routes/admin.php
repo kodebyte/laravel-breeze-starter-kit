@@ -2,10 +2,6 @@
 
 use App\Http\Controllers\Admin as Admin;
 
-Route::get('template', function() {
-    return view('admin.templates.index');
-});
-
 // --- GUEST ROUTES (Belum Login) ---
 Route::middleware('guest:employee')->group(function () {
     
@@ -56,6 +52,11 @@ Route::middleware(['auth:employee', 'force.change.password'])->group(function ()
     // restore delete
     Route::post('users/{id}/restore', [Admin\UserController::class, 'restore'])->name('users.restore');
     Route::post('employees/{id}/restore', [Admin\EmployeeController::class, 'restore'])->name('employees.restore');
+
+    Route::get('/backups', [Admin\BackupController::class, 'index'])->name('backups.index');
+    Route::post('/backups/create', [Admin\BackupController::class, 'create'])->name('backups.create');
+    Route::get('/backups/download/{file_name}', [Admin\BackupController::class, 'download'])->name('backups.download');
+    Route::delete('/backups/delete/{file_name}', [Admin\BackupController::class, 'destroy'])->name('backups.destroy');
 
     Route::resources([
         'users' => Admin\UserController::class,
