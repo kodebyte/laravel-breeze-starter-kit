@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Page\UpdatePageRequest; // Import Request Baru
 use App\Models\Page;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\View\View;
@@ -13,16 +13,13 @@ use Illuminate\View\View;
 class PageController extends Controller implements HasMiddleware
 {
     /**
-     * Define Permissions
-     * Kita samain structure-nya kayak UserController lo.
+     * Define Permissions (Strict & Explicit)
      */
     public static function middleware(): array
     {
         return [
-            // Permission khusus untuk Pages
-            // Pastikan lo udah tambah 'pages.view' & 'pages.update' di Seeder
             new Middleware('permission:pages.view', only: ['index']),
-            new Middleware('permission:pages.update', only: ['edit', 'update']),
+            new Middleware('permission:pages.update', only: ['edit', 'update', 'sync']),
         ];
     }
 
@@ -31,7 +28,6 @@ class PageController extends Controller implements HasMiddleware
      */
     public function index(): View
     {
-        // Kita ambil semua page. Biasanya gak banyak, jadi get() cukup.
         $pages = Page::query()
                     ->orderBy('name')
                     ->get();
@@ -40,7 +36,7 @@ class PageController extends Controller implements HasMiddleware
     }
 
     /**
-     * Show form edit SEO.
+     * Show form edit SEO & Content.
      */
     public function edit(Page $page): View
     {
@@ -48,68 +44,76 @@ class PageController extends Controller implements HasMiddleware
     }
 
     /**
-     * Logic Simpan SEO.
+     * Update SEO & Page Content.
      */
-    public function update(Request $request, Page $page): RedirectResponse
+    public function update(UpdatePageRequest $request, Page $page): RedirectResponse
     {
         try {
-            // 1. Ambil data input array 'seo' (Title, Desc, Canonical)
-            $seoData = $request->input('seo', []);
-
-            // 2. Handle Upload Image (OG Image) manual
-            // Karena package SEO butuh string URL/Path, bukan object File
-            if ($request->hasFile('seo_image')) {
-                $request->validate([
-                    'seo_image' => 'image|max:2048' // Max 2MB
-                ]);
-
-                // Simpan ke storage/public/seo
-                $path = $request->file('seo_image')->store('seo', 'public');
+            // Gunakan Transaction biar aman
+            \DB::transaction(function () use ($request, $page) {
                 
-                // Masukkan path ke array $seoData
-                $seoData['image'] = $path; 
-            }
+                // 1. UPDATE CONTENT (WYSIWYG)
+                // PENTING: Pake $request->input('content') bukan $request->content
+                if ($page->is_editable && $request->has('content')) {
+                    $page->update([
+                        // FIX DISINI:
+                        'content' => $request->input('content') 
+                        // Atau bisa juga: $request->validated('content')
+                    ]);
+                }
 
-            // 3. UPDATE VIA PACKAGE
-            // Ini method sakti dari trait HasSEO
-            $page->seo->update($seoData);
+                // 2. PREPARE SEO DATA
+                $seoData = $request->input('seo', []);
+
+                // 3. HANDLE IMAGE UPLOAD (OG Image)
+                if ($request->hasFile('seo_image')) {
+                    $path = $request->file('seo_image')->store('seo', 'public');
+                    $seoData['image'] = $path; 
+                }
+
+                // 4. UPDATE SEO PACKAGE
+                $page->seo->update($seoData);
+            });
+
+            return to_route('admin.pages.index')
+                    ->with('success', 'Page settings updated successfully.');
+
         } catch (\Throwable $e) {
-            \Log::error('Error updating SEO for Page ID ' . $page->id . ': ' . $e->getMessage());
+            \Log::error('Error updating Page ID ' . $page->id . ': ' . $e->getMessage());
 
-            return back()->with('error', 'Failed to update SEO settings.');
+            return back()->withInput()->with('error', 'Failed to update page settings.');
         }
-
-        return to_route('admin.pages.index')
-                ->with('success', 'SEO settings updated successfully!');
     }
 
-    // Tambahin method ini di dalam class PageController
+    /**
+     * Sync Default Pages (Safe Create).
+     */
     public function sync(): RedirectResponse
     {
-        // 1. Definisikan List Halaman Default Disini (Hardcode aman)
-        // Ini "Source of Truth" halaman statis lo.
+        // "Source of Truth" halaman statis
         $defaultPages = [
-            ['slug' => 'home', 'name' => 'Homepage'],
-            ['slug' => 'about', 'name' => 'About Us'],
-            ['slug' => 'services', 'name' => 'Our Services'],
-            ['slug' => 'contact', 'name' => 'Contact Us'],
-            ['slug' => 'privacy', 'name' => 'Privacy Policy'],
-            ['slug' => 'terms', 'name' => 'Terms of Service'],
+            ['slug' => 'home',     'name' => 'Homepage',       'is_editable' => false], // Hardcoded view
+            ['slug' => 'about',    'name' => 'About Us',       'is_editable' => false], // Hardcoded view
+            ['slug' => 'services', 'name' => 'Our Services',   'is_editable' => false], // Hardcoded view
+            ['slug' => 'contact',  'name' => 'Contact Us',     'is_editable' => false], // Hardcoded view
+            
+            ['slug' => 'privacy',  'name' => 'Privacy Policy',   'is_editable' => true], // Database content
+            ['slug' => 'terms',    'name' => 'Terms of Service', 'is_editable' => true], // Database content
         ];
 
         try {
             $count = 0;
             
-            // 2. Loop dan Create kalau belum ada
-            foreach ($defaultPages as $page) {
-                // firstOrCreate: Cek slug, kalau ga ada baru buat.
-                // Kalau udah ada, dia skip (safe update).
-                $wasRecentlyCreated = Page::firstOrCreate(
-                    ['slug' => $page['slug']], // Pencarian
-                    ['name' => $page['name']]  // Data jika dibuat baru
-                )->wasRecentlyCreated;
+            foreach ($defaultPages as $pageData) {
+                $page = Page::firstOrCreate(
+                    ['slug' => $pageData['slug']], // Kunci pencarian
+                    [
+                        'name' => $pageData['name'],
+                        'is_editable' => $pageData['is_editable'] ?? false
+                    ] 
+                );
 
-                if ($wasRecentlyCreated) {
+                if ($page->wasRecentlyCreated) {
                     $count++;
                 }
             }
@@ -117,11 +121,13 @@ class PageController extends Controller implements HasMiddleware
             if ($count > 0) {
                 return back()->with('success', "Synced! Added {$count} new pages.");
             }
+
+            return back()->with('info', 'All pages are already synced.');
+
         } catch (\Throwable $e) {
             \Log::error('Sync Pages Error: ' . $e->getMessage());
+            
             return back()->with('error', 'Failed to sync pages.');
         }
-
-        return back()->with('info', 'All pages are already synced.');
     }
 }

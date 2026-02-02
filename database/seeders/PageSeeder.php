@@ -13,11 +13,11 @@ class PageSeeder extends Seeder
     public function run(): void
 {
     $pages = [
-        ['name' => 'Homepage', 'slug' => 'home'],
-        ['name' => 'About Us', 'slug' => 'about'],
+        ['name' => 'Homepage', 'slug' => 'home', 'is_editable' => false],
+        ['name' => 'About Us', 'slug' => 'about', 'is_editable' => false],
         ['name' => 'Contact Us', 'slug' => 'contact'],
-        ['name' => 'Privacy Policy', 'slug' => 'privacy'],
-        ['name' => 'Terms of Service', 'slug' => 'terms'],
+        ['name' => 'Privacy Policy', 'slug' => 'privacy', 'is_editable' => true],
+        ['name' => 'Terms of Service', 'slug' => 'terms', 'is_editable' => true],
     ];
 
     foreach ($pages as $page) {

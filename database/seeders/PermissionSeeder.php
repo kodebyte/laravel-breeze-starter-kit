@@ -46,6 +46,9 @@ class PermissionSeeder extends Seeder
 
             // Module: Page SEO
             'pages' => ['view', 'update'],
+
+            // Module: Menu Item
+            'menus' => ['view', 'create', 'update', 'delete'],
         ];
 
         // 3. Create Permissions Loop

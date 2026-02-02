@@ -62,6 +62,9 @@ Route::middleware(['auth:employee', 'force.change.password'])->group(function ()
     Route::get('system', [App\Http\Controllers\Admin\SystemController::class, 'index'])->name('system.index')
         ->middleware('can:system.view_logs');
 
+    // Route khusus AJAX Drag & Drop
+    Route::post('menus/update-tree', [\App\Http\Controllers\Admin\MenuController::class, 'updateTree'])->name('menus.update-tree');
+
     // restore delete
     Route::post('users/{id}/restore', [Admin\UserController::class, 'restore'])->name('users.restore');
     Route::post('employees/{id}/restore', [Admin\EmployeeController::class, 'restore'])->name('employees.restore');
@@ -71,6 +74,9 @@ Route::middleware(['auth:employee', 'force.change.password'])->group(function ()
     Route::get('/backups/download/{file_name}', [Admin\BackupController::class, 'download'])->name('backups.download');
     Route::delete('/backups/delete/{file_name}', [Admin\BackupController::class, 'destroy'])->name('backups.destroy');
 
+    Route::resource('menus', \App\Http\Controllers\Admin\MenuController::class)
+        ->only(['index', 'store', 'update', 'destroy']);
+    
     Route::resource('pages', Admin\PageController::class)
         ->only(['index', 'edit', 'update']);
 

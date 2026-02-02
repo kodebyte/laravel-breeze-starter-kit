@@ -141,6 +141,35 @@
             </x-admin.layouts.sidebar-link>
         @endcan
 
+        {{-- GROUP: MANAGEMENT --}}
+        <div class="pt-6 mb-2 px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest"
+            x-show="'users employees staff roles management'.includes(searchMenu.toLowerCase())">
+             Content Management
+        </div>
+
+        {{-- 1. STATIC PAGES (YANG KITA BUAT SEKARANG) --}}
+        @can('pages.view')
+            <x-admin.layouts.sidebar-link 
+                :href="route('admin.pages.index')" 
+                :active="request()->routeIs('admin.pages.*')" 
+                title="Static Pages"
+                x-show="'static pages seo about privacy terms'.includes(searchMenu.toLowerCase())">
+                <x-admin.icon.template class="w-5 h-5" />
+            </x-admin.layouts.sidebar-link>
+        @endcan
+
+        {{-- 2. MENU BUILDER (BARU) --}}
+        @can('menus.view')
+            <x-admin.layouts.sidebar-link 
+                :href="route('admin.menus.index')" 
+                :active="request()->routeIs('admin.menus.*')" 
+                title="Menu Manager"
+                x-show="'menu navbar navigation builder link'.includes(searchMenu.toLowerCase())">
+                {{-- Panggil icon menu yang baru dibuat --}}
+                <x-admin.icon.menu class="w-5 h-5" />
+            </x-admin.layouts.sidebar-link>
+        @endcan
+
         {{-- GROUP: ACCOUNT --}}
         <div class="pt-6 mb-2 px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest"
             x-show="'user profile account'.includes(searchMenu.toLowerCase())">
@@ -198,18 +227,6 @@
             </x-admin.layouts.sidebar-link>
         @endcan
 
-        {{-- MENU: STATIC PAGES (SEO) --}}
-        @can('pages.view')
-            <x-admin.layouts.sidebar-link 
-                :href="route('admin.pages.index')" 
-                :active="request()->routeIs('admin.pages.*')" 
-                title="Static Pages (SEO)"
-                x-show="'static pages seo content meta title description'.includes(searchMenu.toLowerCase())">
-                {{-- Panggil icon template yang baru kita buat --}}
-                <x-admin.icon.template class="w-5 h-5" />
-            </x-admin.layouts.sidebar-link>
-        @endcan
-
         {{-- NEW: BACKUPS (Hanya Super Admin biasanya) --}}
         @if(auth()->user()->hasRole('Super Admin')) 
             <x-admin.layouts.sidebar-link 
@@ -232,7 +249,7 @@
         @endcan
 
         {{-- EMPTY STATE SEARCH --}}
-        <div x-show="searchMenu !== '' && 
+        <div x-cloak x-show="searchMenu !== '' && 
                     !'dashboard'.includes(searchMenu.toLowerCase()) && 
                     !'users clients customers'.includes(searchMenu.toLowerCase()) && 
                     !'employees staff internal team'.includes(searchMenu.toLowerCase()) &&

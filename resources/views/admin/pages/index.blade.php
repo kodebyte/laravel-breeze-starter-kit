@@ -3,7 +3,7 @@
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div>
-                <x-admin.ui.breadcrumb :links="['System' => '#', 'Static Pages' => '#']" />
+                <x-admin.ui.breadcrumb :links="['Content Management' => '#', 'Static Pages' => '#']" />
                 <h2 class="font-bold text-xl text-gray-900 leading-tight">
                     Page Manager
                 </h2>
