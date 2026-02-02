@@ -49,6 +49,9 @@ class PermissionSeeder extends Seeder
 
             // Module: Menu Item
             'menus' => ['view', 'create', 'update', 'delete'],
+
+            // Module: Inquiry
+            'inquiries' => ['view', 'delete'],
         ];
 
         // 3. Create Permissions Loop

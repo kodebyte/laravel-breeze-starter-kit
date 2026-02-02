@@ -170,6 +170,17 @@
             </x-admin.layouts.sidebar-link>
         @endcan
 
+        @can('inquiries.view')
+            <x-admin.layouts.sidebar-link 
+                :href="route('admin.inquiries.index')" 
+                :active="request()->routeIs('admin.inquiries.*')" 
+                title="Inbox Messages"
+                x-show="'inbox message contact inquiry'.includes(searchMenu.toLowerCase())">
+                {{-- Icon Inbox --}}
+                <x-admin.icon.envelop class="w-5 h-5" />
+            </x-admin.layouts.sidebar-link>
+        @endcan
+
         {{-- GROUP: ACCOUNT --}}
         <div class="pt-6 mb-2 px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest"
             x-show="'user profile account'.includes(searchMenu.toLowerCase())">
@@ -190,14 +201,16 @@
             Content & Assets
         </div>
 
-        <x-admin.layouts.sidebar-link 
-            :href="route('admin.media.index')" 
-            :active="request()->routeIs('admin.media.*')" 
-            title="Media Library"
-            x-show="'media files assets content library gallery upload'.includes(searchMenu.toLowerCase())">
-            {{-- Icon Collection/Folder --}}
-            <x-admin.icon.collection class="w-5 h-5" />
-        </x-admin.layouts.sidebar-link>
+        @can('media.view')
+            <x-admin.layouts.sidebar-link 
+                :href="route('admin.media.index')" 
+                :active="request()->routeIs('admin.media.*')" 
+                title="Media Library"
+                x-show="'media files assets content library gallery upload'.includes(searchMenu.toLowerCase())">
+                {{-- Icon Collection/Folder --}}
+                <x-admin.icon.collection class="w-5 h-5" />
+            </x-admin.layouts.sidebar-link>
+        @endcan
 
         {{-- GROUP: SYSTEM --}}
         <div class="pt-6 mb-2 px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest"

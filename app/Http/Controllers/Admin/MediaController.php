@@ -7,10 +7,20 @@ use App\Http\Requests\Admin\Media\StoreMediaRequest;
 use App\Models\Media;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\View\View;
 
-class MediaController extends Controller
+class MediaController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:media.view', only: ['index']),
+            new Middleware('permission:media.delete', only: ['destroy']),
+        ];
+    }
+
     public function index(Request $request): View
     {
         // MAGIC OF HASFILTERS:

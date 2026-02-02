@@ -78,6 +78,14 @@
                 </x-admin.table.tbody>
             </x-admin.table>
 
+            <div class="bg-gray-50 px-6 py-3 border-t border-gray-100 flex items-center justify-between">
+                <span class="text-xs text-gray-500">
+                    Total Pages: <span class="font-bold text-gray-700">{{ $pages->count() }}</span>
+                </span>
+                <span class="text-[10px] text-gray-400">
+                    All pages loaded.
+                </span>
+            </div>
         </div>
     </div>
 </x-admin.layouts.app>

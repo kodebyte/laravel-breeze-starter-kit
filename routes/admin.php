@@ -41,6 +41,11 @@ Route::middleware(['auth:employee', 'force.change.password'])->group(function ()
     Route::post('/media/', [Admin\MediaController::class, 'store'])->name('media.store');
     Route::delete('/media/{id}', [Admin\MediaController::class, 'destroy'])->name('media.destroy');
 
+    // inquiry
+    // Inbox / Inquiries
+    Route::resource('inquiries', Admin\InquiryController::class)
+        ->only(['index', 'show', 'destroy']);
+
     // NOTIFICATIONS
     Route::get('/notifications', [Admin\NotificationController::class, 'index'])->name('notifications.index');
     Route::patch('/notifications/{id}/read', [Admin\NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
