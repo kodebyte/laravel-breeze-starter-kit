@@ -75,8 +75,12 @@ class RoleController extends Controller implements HasMiddleware
         }
     }
 
-    public function edit(Role $role): View
+    public function edit(Role $role): View|RedirectResponse
     {
+        if ($role->name === 'Super Admin') {
+            return back()->with('error', 'Super Admin role cannot be deleted.');
+        }
+
         $permissions = Permission::where('guard_name', 'employee')->get();
         
         return view('admin.roles.edit', compact('role', 'permissions'));
@@ -84,6 +88,10 @@ class RoleController extends Controller implements HasMiddleware
 
     public function update(UpdateRoleRequest $request, Role $role): RedirectResponse
     {
+        if ($role->name === 'Super Admin') {
+            return back()->with('error', 'Super Admin role cannot be modified.');
+        }
+
         try {
             // 1. Update Name
             $role->update(['name' => $request->name]);
@@ -107,6 +115,10 @@ class RoleController extends Controller implements HasMiddleware
 
     public function destroy(Role $role): RedirectResponse
     {
+        if ($role->name === 'Super Admin') {
+            return back()->with('error', 'Super Admin role cannot be deleted.');
+        }
+        
         try {
             // Guard: Cegah hapus Super Admin
             if ($role->name === 'Super Admin') {

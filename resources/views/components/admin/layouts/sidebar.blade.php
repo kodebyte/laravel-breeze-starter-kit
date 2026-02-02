@@ -155,11 +155,38 @@
             <x-admin.icon.user-circle class="w-5 h-5" />
         </x-admin.layouts.sidebar-link>
 
+        {{-- GROUP: CONTENT & ASSETS --}}
+        <div class="pt-6 mb-2 px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest"
+            x-show="'media files assets content library gallery upload'.includes(searchMenu.toLowerCase())">
+            Content & Assets
+        </div>
+
+        <x-admin.layouts.sidebar-link 
+            :href="route('admin.media.index')" 
+            :active="request()->routeIs('admin.media.*')" 
+            title="Media Library"
+            x-show="'media files assets content library gallery upload'.includes(searchMenu.toLowerCase())">
+            {{-- Icon Collection/Folder --}}
+            <x-admin.icon.collection class="w-5 h-5" />
+        </x-admin.layouts.sidebar-link>
+
         {{-- GROUP: SYSTEM --}}
         <div class="pt-6 mb-2 px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest"
-            x-show="'activity logs system history audit settings general backups restore database'.includes(searchMenu.toLowerCase())">
+            x-show="'activity logs system history audit settings general backups restore database health server status'.includes(searchMenu.toLowerCase())">
             System Administration
         </div>
+        
+        {{-- MENU: SYSTEM HEALTH (BARU) --}}
+        @can('system.view_logs')
+            <x-admin.layouts.sidebar-link 
+                :href="route('admin.system.index')" 
+                :active="request()->routeIs('admin.system.*')" 
+                title="System Health"
+                x-show="'system health server status disk database cpu'.includes(searchMenu.toLowerCase())">
+                {{-- Panggil icon yang baru kita buat --}}
+                <x-admin.icon.chip class="w-5 h-5" />
+            </x-admin.layouts.sidebar-link>
+        @endcan
 
         @can('logs.view')
             <x-admin.layouts.sidebar-link 
@@ -171,8 +198,19 @@
             </x-admin.layouts.sidebar-link>
         @endcan
 
+        {{-- MENU: STATIC PAGES (SEO) --}}
+        @can('pages.view')
+            <x-admin.layouts.sidebar-link 
+                :href="route('admin.pages.index')" 
+                :active="request()->routeIs('admin.pages.*')" 
+                title="Static Pages (SEO)"
+                x-show="'static pages seo content meta title description'.includes(searchMenu.toLowerCase())">
+                {{-- Panggil icon template yang baru kita buat --}}
+                <x-admin.icon.template class="w-5 h-5" />
+            </x-admin.layouts.sidebar-link>
+        @endcan
+
         {{-- NEW: BACKUPS (Hanya Super Admin biasanya) --}}
-        {{-- Lo bisa ganti can('backups.view') kalau sudah bikin permissionnya --}}
         @if(auth()->user()->hasRole('Super Admin')) 
             <x-admin.layouts.sidebar-link 
                 :href="route('admin.backups.index')" 

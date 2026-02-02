@@ -74,13 +74,31 @@
                             {{-- 5. ACTIONS --}}
                             <x-admin.table.td class="text-right font-medium">
                                 <div class="flex justify-end gap-3">
-                                    @can('roles.update')
-                                        <x-admin.ui.action-edit :href="route('admin.roles.edit', $role)" />
-                                    @endcan
                                     
-                                    @can('roles.delete')
-                                        <x-admin.ui.action-delete :action="route('admin.roles.destroy', $role)" />
-                                    @endcan
+                                    {{-- LOGIC: Cek Nama Role --}}
+                                    @if($role->name === 'Super Admin')
+                                        
+                                        {{-- Kalau Super Admin: KUNCI --}}
+                                        <span class="text-xs text-gray-400 font-bold flex items-center gap-1 border border-gray-200 bg-gray-50 px-2 py-1 rounded select-none" title="System Role cannot be modified">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                            </svg>
+                                            System
+                                        </span>
+
+                                    @else
+                                        
+                                        {{-- Kalau Role Biasa: Show Edit & Delete --}}
+                                        @can('roles.update')
+                                            <x-admin.ui.action-edit :href="route('admin.roles.edit', $role)" />
+                                        @endcan
+                                        
+                                        @can('roles.delete')
+                                            <x-admin.ui.action-delete :action="route('admin.roles.destroy', $role)" />
+                                        @endcan
+
+                                    @endif
                                 </div>
                             </x-admin.table.td>
 

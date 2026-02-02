@@ -64,12 +64,11 @@ return [
 
         'google' => [
             'driver' => 'google',
-            'clientId' => Setting::get('backup_google_client_id'),
-            'clientSecret' => Setting::get('backup_google_client_secret'),
-            'refreshToken' => Setting::get('backup_google_refresh_token'),
-            'folderId' => Setting::get('backup_google_folder_id'),
+            'clientId' => env('GOOGLE_DRIVE_CLIENT_ID'),
+            'clientSecret' => env('GOOGLE_DRIVE_CLIENT_SECRET'),
+            'refreshToken' => env('GOOGLE_DRIVE_REFRESH_TOKEN'),
+            'folderId' => env('GOOGLE_DRIVE_FOLDER_ID'),
         ],
-
     ],
 
     /*

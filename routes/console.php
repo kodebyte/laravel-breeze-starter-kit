@@ -3,33 +3,28 @@
 use App\Models\Setting;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
+use Illuminate\Support\Facades\Schema;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-try {
-    // Cek apakah fitur aktif di database
-    // (Pastikan Model Setting udah ada & tabel udah dimigrasi)
-    $backupActive = false;
-    
-    // Pengecekan aman biar gak error "Base table or view not found" pas fresh install
-    if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
-        $backupActive = Setting::get('backup_daily_active');
-    }
+/**
+ * Logic database dipindah ke dalam 'when'. 
+ * Ini AMAN karena tidak dieksekusi saat artisan booting.
+ */
 
-    if ($backupActive) {
-        // 1. Bersihkan backup lama (biar disk gak penuh) jam 01:00
-        Schedule::command('backup:clean')
-                ->dailyAt('01:00')
-                ->withoutOverlapping();
+Schedule::command('backup:clean')
+    ->dailyAt('01:00')
+    ->withoutOverlapping()
+    ->when(function () {
+        return Schema::hasTable('settings') && Setting::get('backup_daily_active');
+    });
 
-        // 2. Jalankan backup baru jam 01:30
-        // --only-db biar cepet. Hapus flag ini kalau mau file project juga.
-        Schedule::command('backup:run --only-db --disable-notifications')
-                ->dailyAt('01:30')
-                ->withoutOverlapping();
-    }
-} catch (\Exception $e) {
-    // Silent error: biar gak ngerusak artisan command lain
-}
+Schedule::command('backup:run --only-db --disable-notifications')
+    ->dailyAt('01:30')
+    ->withoutOverlapping()
+    ->when(function () {
+        return Schema::hasTable('settings') && Setting::get('backup_daily_active');
+    });

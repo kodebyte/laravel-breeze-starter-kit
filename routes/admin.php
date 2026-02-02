@@ -32,6 +32,15 @@ Route::middleware(['auth:employee', 'force.change.password'])->group(function ()
     Route::get('/logs', [Admin\ActivityLogController::class, 'index'])->name('logs.index');
     Route::get('/logs/{id}', [Admin\ActivityLogController::class, 'show'])->name('logs.show');
 
+    // pages
+    Route::post('pages/sync', [Admin\PageController::class, 'sync'])
+        ->name('pages.sync');
+
+    // media
+    Route::get('/media/', [Admin\MediaController::class, 'index'])->name('media.index');
+    Route::post('/media/', [Admin\MediaController::class, 'store'])->name('media.store');
+    Route::delete('/media/{id}', [Admin\MediaController::class, 'destroy'])->name('media.destroy');
+
     // NOTIFICATIONS
     Route::get('/notifications', [Admin\NotificationController::class, 'index'])->name('notifications.index');
     Route::patch('/notifications/{id}/read', [Admin\NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
@@ -48,6 +57,10 @@ Route::middleware(['auth:employee', 'force.change.password'])->group(function ()
 
     // unlock employee
     Route::patch('/employees/{employee}/unlock', [Admin\EmployeeController::class, 'unlock'])->name('employees.unlock');
+    
+    // system
+    Route::get('system', [App\Http\Controllers\Admin\SystemController::class, 'index'])->name('system.index')
+        ->middleware('can:system.view_logs');
 
     // restore delete
     Route::post('users/{id}/restore', [Admin\UserController::class, 'restore'])->name('users.restore');
@@ -57,6 +70,9 @@ Route::middleware(['auth:employee', 'force.change.password'])->group(function ()
     Route::post('/backups/create', [Admin\BackupController::class, 'create'])->name('backups.create');
     Route::get('/backups/download/{file_name}', [Admin\BackupController::class, 'download'])->name('backups.download');
     Route::delete('/backups/delete/{file_name}', [Admin\BackupController::class, 'destroy'])->name('backups.destroy');
+
+    Route::resource('pages', Admin\PageController::class)
+        ->only(['index', 'edit', 'update']);
 
     Route::resources([
         'users' => Admin\UserController::class,

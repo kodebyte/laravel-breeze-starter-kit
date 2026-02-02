@@ -9,11 +9,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\Image\Enums\Fit;
 
-class Employee extends Authenticatable
+class Employee extends Authenticatable implements HasMedia
 {
-    use HasFactory, Notifiable, HasRoles, HasFilters, HasActivityLogs, SoftDeletes;
+    use HasFactory, Notifiable, HasRoles, HasFilters, HasActivityLogs, InteractsWithMedia, SoftDeletes;
 
     protected $guard_name = 'employee'; 
 
@@ -44,5 +48,20 @@ class Employee extends Authenticatable
             'must_change_password' => 'boolean',
             'status' => EmployeeStatus::class
         ];
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        // 1. WebP Conversion
+        $this->addMediaConversion('webp')
+            ->format('webp')
+            ->quality(80)
+            ->nonQueued();
+
+        // 2. Thumbnail Conversion
+        // Ganti string 'contain' jadi Enum Fit::Contain
+        $this->addMediaConversion('thumb')
+            ->fit(Fit::Contain, 300, 300) 
+            ->nonQueued();
     }
 }

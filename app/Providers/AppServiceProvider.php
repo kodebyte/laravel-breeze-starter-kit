@@ -10,6 +10,7 @@ use Illuminate\Auth\Events\Authenticated;
 use App\Models\Employee;
 use App\Notifications\SystemNotification;
 use App\Observers\EmployeeObserver;
+use Illuminate\Support\Facades\Gate;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,6 +27,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::before(function ($user, $ability) {
+            return $user->hasRole('super-admin') ? true : null;
+        });
+        
         Employee::observe(EmployeeObserver::class);
 
         /**
