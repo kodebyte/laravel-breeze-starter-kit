@@ -194,16 +194,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            {{-- Tombol Show Recovery Codes --}}
-                                            <div class="mt-4">
-                                                <button type="button" 
-                                                    onclick="document.getElementById('recovery-codes-area').classList.toggle('hidden')"
-                                                    class="text-xs font-bold text-indigo-600 hover:text-indigo-800 underline">
-                                                    Show Recovery Codes
-                                                </button>
-                                            </div>
-
                                         @else
                                             {{-- KASUS LANGKA: Secret ada, tapi belum confirmed dan session flash hilang --}}
                                             <div class="bg-yellow-50 p-4 rounded border border-yellow-200">
@@ -216,20 +206,43 @@
                                     {{-- KOLOM KANAN: RECOVERY CODES --}}
                                     <div>
                                         <p class="text-sm font-bold text-gray-900 mb-1">Recovery Codes</p>
-                                        <div class="bg-gray-900 rounded-lg p-4 mb-3">
-                                            <div class="grid grid-cols-2 gap-2">
-                                                @foreach (json_decode(decrypt(auth('employee')->user()->two_factor_recovery_codes), true) as $code)
-                                                    <div class="text-xs font-mono text-green-400 tracking-wider">• {{ $code }}</div>
-                                                @endforeach
-                                            </div>
-                                        </div>
+                                        <p class="text-xs text-indigo-700/80 mb-3 leading-relaxed">
+                                            Store these codes in a secure password manager. They can be used to recover access to your account if your 2FA device is lost.
+                                        </p>
                                         
-                                        {{-- FIX ROUTE: admin.two-factor.recovery-codes --}}
+                                        {{-- LOGIC: Cuma tampilkan kode kalau baru Enable atau baru Regenerate --}}
+                                        @if(session('status') == 'two-factor-authentication-enabled' || session('status') == 'recovery-codes-generated')
+                                            
+                                            <div class="bg-gray-900 rounded-lg p-4 mb-3 animate-pulse-once"> {{-- Tambah efek dikit biar sadar --}}
+                                                <div class="grid grid-cols-2 gap-2">
+                                                    @foreach (json_decode(decrypt(auth('employee')->user()->two_factor_recovery_codes), true) as $code)
+                                                        <div class="text-xs font-mono text-green-400 tracking-wider select-all cursor-pointer hover:text-white">
+                                                            • {{ $code }}
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="mb-4 text-xs text-red-500 font-bold">
+                                                ⚠️ Copy these codes now. They will not be shown again.
+                                            </div>
+
+                                        @else
+                                            {{-- TAMPILAN DEFAULT (HIDDEN) --}}
+                                            <div class="bg-gray-100 rounded-lg p-4 mb-3 border border-gray-200 text-center">
+                                                <p class="text-xs text-gray-500 italic">
+                                                    Recovery codes are hidden for security.
+                                                </p>
+                                            </div>
+                                        @endif
+                                        
+                                        {{-- FORM REGENERATE (Selalu Ada) --}}
                                         <form method="POST" action="{{ route('admin.two-factor.recovery-codes') }}">
                                             @csrf
-                                            <button type="submit" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 underline">
+                                            {{-- Kita bungkus button biar agak serius --}}
+                                            <x-admin.ui.button type="submit" color="secondary" size="sm" onclick="return confirm('Generate new recovery codes? Old codes will stop working.');">
                                                 Regenerate Recovery Codes
-                                            </button>
+                                            </x-admin.ui.button>
                                         </form>
                                     </div>
 

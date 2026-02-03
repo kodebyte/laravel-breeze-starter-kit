@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
-use App\Actions\Fortify\CreateNewUser;
-use App\Actions\Fortify\ResetUserPassword;
-use App\Actions\Fortify\UpdateUserPassword;
-use App\Actions\Fortify\UpdateUserProfileInformation;
+use App\Http\Responses\TwoFactorEnabledResponse;
+use App\Http\Responses\TwoFactorDisabledResponse;
+use Laravel\Fortify\Contracts\TwoFactorAuthenticationEnabledResponse;
+use Laravel\Fortify\Contracts\TwoFactorAuthenticationDisabledResponse;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -37,8 +37,6 @@ class FortifyServiceProvider extends ServiceProvider
         $this->app->singleton(LoginResponseContract::class, LoginResponse::class);
         $this->app->singleton(TwoFactorLoginResponseContract::class, LoginResponse::class);
 
-        // 3. Register Views (INI YANG BIKIN ERROR KALAU HILANG) 🔥
-        
         // A. View Login
         Fortify::loginView(function () {
             return view('admin.auth.login'); 
