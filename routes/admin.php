@@ -89,5 +89,8 @@ Route::middleware(['auth:employee', 'force.change.password'])->group(function ()
         'users' => Admin\UserController::class,
         'employees' => Admin\EmployeeController::class,
         'roles' => Admin\RoleController::class,
+        'categories' => Admin\CategoryController::class,
+        'posts' => Admin\PostController::class,
+        'banners' => Admin\BannerController::class,
     ]);
 });

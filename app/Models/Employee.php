@@ -64,4 +64,9 @@ class Employee extends Authenticatable implements HasMedia
             ->fit(Fit::Contain, 300, 300) 
             ->nonQueued();
     }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class, 'employee_id');
+    }
 }

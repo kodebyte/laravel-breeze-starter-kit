@@ -19,12 +19,11 @@
             </span>
         </a>
 
-        {{-- NOTIFICATION BELL (Panel Dropdown) --}}
+        {{-- NOTIFICATION BELL --}}
         <div class="relative" x-data="{ openNotif: false }">
             <button @click="openNotif = !openNotif" class="relative p-1.5 text-gray-400 hover:text-primary transition-colors focus:outline-none">
                 <x-admin.icon.bell class="w-5 h-5" />
                 
-                {{-- Badge Unread Count --}}
                 @if(Auth::guard('employee')->user()->unreadNotifications->count() > 0)
                     <span class="absolute top-1 right-1 flex h-2 w-2">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -33,7 +32,7 @@
                 @endif
             </button>
 
-            {{-- Dropdown Panel (Arah Kanan/Left-0) --}}
+            {{-- Dropdown Panel --}}
             <div x-show="openNotif" 
                 x-cloak
                 @click.outside="openNotif = false"
@@ -52,17 +51,17 @@
                         <a href="{{ $notification->data['url'] ?? '#' }}" class="block px-4 py-3 hover:bg-gray-50 border-b border-gray-50 last:border-0 transition-colors group">
                             <div class="flex items-start gap-2">
                                 <div class="mt-0.5">
-                                    @if($notification->data['type'] == 'danger')
+                                    @if(($notification->data['type'] ?? '') == 'danger')
                                         <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div>
-                                    @elseif($notification->data['type'] == 'warning')
+                                    @elseif(($notification->data['type'] ?? '') == 'warning')
                                         <div class="w-1.5 h-1.5 rounded-full bg-orange-500"></div>
                                     @else
                                         <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
                                     @endif
                                 </div>
                                 <div>
-                                    <p class="text-[11px] font-bold text-gray-900 group-hover:text-primary transition-colors">{{ $notification->data['title'] }}</p>
-                                    <p class="text-[10px] text-gray-500 line-clamp-1 mt-0.5">{{ $notification->data['message'] }}</p>
+                                    <p class="text-[11px] font-bold text-gray-900 group-hover:text-primary transition-colors">{{ $notification->data['title'] ?? 'Notification' }}</p>
+                                    <p class="text-[10px] text-gray-500 line-clamp-1 mt-0.5">{{ $notification->data['message'] ?? '' }}</p>
                                     <p class="text-[9px] text-gray-400 mt-1">{{ $notification->created_at->diffForHumans() }}</p>
                                 </div>
                             </div>
@@ -105,9 +104,11 @@
             </x-admin.layouts.sidebar-link>
         @endcan
 
-        {{-- GROUP: MANAGEMENT --}}
+        {{-- ==================================================== --}}
+        {{-- GROUP: MANAGEMENT (Users, Staff, Access, Inbox) --}}
+        {{-- ==================================================== --}}
         <div class="pt-6 mb-2 px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest"
-            x-show="'users employees staff roles management'.includes(searchMenu.toLowerCase())">
+            x-show="'users employees staff roles management inbox message client'.includes(searchMenu.toLowerCase())">
             Management
         </div>
 
@@ -116,7 +117,7 @@
                 :href="route('admin.users.index')" 
                 :active="request()->routeIs('admin.users.*')" 
                 title="Users"
-                x-show="'users clients customers'.includes(searchMenu.toLowerCase())">
+                x-show="'users clients customers members'.includes(searchMenu.toLowerCase())">
                 <x-admin.icon.users class="w-5 h-5" />
             </x-admin.layouts.sidebar-link>
         @endcan
@@ -126,7 +127,7 @@
                 :href="route('admin.employees.index')" 
                 :active="request()->routeIs('admin.employees.*')" 
                 title="Employees"
-                x-show="'employees staff internal team'.includes(searchMenu.toLowerCase())">
+                x-show="'employees staff internal team admin'.includes(searchMenu.toLowerCase())">
                 <x-admin.icon.briefcase class="w-5 h-5" />
             </x-admin.layouts.sidebar-link>
         @endcan
@@ -136,37 +137,8 @@
                 :href="route('admin.roles.index')" 
                 :active="request()->routeIs('admin.roles.*')" 
                 title="Roles & Access"
-                x-show="'roles permissions access security'.includes(searchMenu.toLowerCase())">
+                x-show="'roles permissions access security guard'.includes(searchMenu.toLowerCase())">
                 <x-admin.icon.shield class="w-5 h-5" />
-            </x-admin.layouts.sidebar-link>
-        @endcan
-
-        {{-- GROUP: MANAGEMENT --}}
-        <div class="pt-6 mb-2 px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest"
-            x-show="'users employees staff roles management'.includes(searchMenu.toLowerCase())">
-             Content Management
-        </div>
-
-        {{-- 1. STATIC PAGES (YANG KITA BUAT SEKARANG) --}}
-        @can('pages.view')
-            <x-admin.layouts.sidebar-link 
-                :href="route('admin.pages.index')" 
-                :active="request()->routeIs('admin.pages.*')" 
-                title="Static Pages"
-                x-show="'static pages seo about privacy terms'.includes(searchMenu.toLowerCase())">
-                <x-admin.icon.template class="w-5 h-5" />
-            </x-admin.layouts.sidebar-link>
-        @endcan
-
-        {{-- 2. MENU BUILDER (BARU) --}}
-        @can('menus.view')
-            <x-admin.layouts.sidebar-link 
-                :href="route('admin.menus.index')" 
-                :active="request()->routeIs('admin.menus.*')" 
-                title="Menu Manager"
-                x-show="'menu navbar navigation builder link'.includes(searchMenu.toLowerCase())">
-                {{-- Panggil icon menu yang baru dibuat --}}
-                <x-admin.icon.menu class="w-5 h-5" />
             </x-admin.layouts.sidebar-link>
         @endcan
 
@@ -175,57 +147,129 @@
                 :href="route('admin.inquiries.index')" 
                 :active="request()->routeIs('admin.inquiries.*')" 
                 title="Inbox Messages"
-                x-show="'inbox message contact inquiry'.includes(searchMenu.toLowerCase())">
-                {{-- Icon Inbox --}}
+                x-show="'inbox message contact inquiry email feedback'.includes(searchMenu.toLowerCase())">
                 <x-admin.icon.envelop class="w-5 h-5" />
             </x-admin.layouts.sidebar-link>
         @endcan
 
-        {{-- GROUP: ACCOUNT --}}
+        {{-- ==================================================== --}}
+        {{-- GROUP: CONTENT & MEDIA (Pages, Blog, Menu, Media) --}}
+        {{-- ==================================================== --}}
         <div class="pt-6 mb-2 px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest"
-            x-show="'user profile account'.includes(searchMenu.toLowerCase())">
-            Account
+            x-show="'content media blog pages articles file image upload menu'.includes(searchMenu.toLowerCase())">
+             Content & Media
         </div>
 
-        <x-admin.layouts.sidebar-link 
-            :href="route('admin.profile.edit')" 
-            :active="request()->routeIs('admin.profile.*')" 
-            title="Profile Settings"
-            x-show="'profile settings account password me'.includes(searchMenu.toLowerCase())">
-            <x-admin.icon.user-circle class="w-5 h-5" />
-        </x-admin.layouts.sidebar-link>
+        @can('pages.view')
+            <x-admin.layouts.sidebar-link 
+                :href="route('admin.pages.index')" 
+                :active="request()->routeIs('admin.pages.*')" 
+                title="Static Pages"
+                x-show="'static pages seo about privacy terms landing'.includes(searchMenu.toLowerCase())">
+                <x-admin.icon.template class="w-5 h-5" />
+            </x-admin.layouts.sidebar-link>
+        @endcan
 
-        {{-- GROUP: CONTENT & ASSETS --}}
-        <div class="pt-6 mb-2 px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest"
-            x-show="'media files assets content library gallery upload'.includes(searchMenu.toLowerCase())">
-            Content & Assets
-        </div>
+        {{-- BANNER SYSTEM --}}
+        @can('banners.view')
+            <x-admin.layouts.sidebar-link 
+                :href="route('admin.banners.index')" 
+                :active="request()->routeIs('admin.banners.*')" 
+                title="Banner System"
+                x-show="'banner slider hero promo ads marketing'.includes(searchMenu.toLowerCase())">
+                {{-- Icon Photograph/Banner --}}
+                <x-admin.icon.photograph class="w-5 h-5" />
+            </x-admin.layouts.sidebar-link>
+        @endcan
+
+        {{-- BLOG SYSTEM DROPDOWN --}}
+        @canany(['posts.view', 'categories.view'])
+            <div x-data="{ open: {{ request()->routeIs('admin.categories.*') || request()->routeIs('admin.posts.*') ? 'true' : 'false' }} }"
+                 x-show="'blog articles posts categories news writing editorial'.includes(searchMenu.toLowerCase())">
+                
+                {{-- PARENT BUTTON --}}
+                <button @click="open = !open" 
+                    class="w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors gap-3 mb-1
+                    {{ request()->routeIs('admin.categories.*') || request()->routeIs('admin.posts.*') 
+                        ? 'bg-primary/10 text-primary' 
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' 
+                    }}">
+                    
+                    <div class="flex items-center gap-3">
+                        {{-- ICON: NEWSPAPER (Pake Component!) --}}
+                        <x-admin.icon.newspaper class="w-5 h-5 {{ request()->routeIs('admin.categories.*') || request()->routeIs('admin.posts.*') ? 'text-primary' : 'text-gray-400' }}" />
+                        <span>Blog System</span>
+                    </div>
+
+                    {{-- CHEVRON ICON (Raw SVG ok buat utility) --}}
+                    <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="{'rotate-180': open}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+
+                {{-- SUB MENU CHILDREN --}}
+                <div x-show="open" x-cloak class="space-y-1">
+                    @can('posts.view')
+                        <a href="{{ route('admin.posts.index') }}" class="flex items-center gap-3 pl-11 pr-3 py-2 text-sm font-medium rounded-lg transition-colors
+                            {{ request()->routeIs('admin.posts.*') 
+                                ? 'text-primary bg-primary/5' 
+                                : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' 
+                            }}">
+                            {{-- ICON: PENCIL --}}
+                            <x-admin.icon.pencil class="w-4 h-4" />
+                            All Posts
+                        </a>
+                    @endcan
+
+                    @can('categories.view')
+                        <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 pl-11 pr-3 py-2 text-sm font-medium rounded-lg transition-colors
+                            {{ request()->routeIs('admin.categories.*') 
+                                ? 'text-primary bg-primary/5' 
+                                : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' 
+                            }}">
+                            {{-- ICON: HASHTAG --}}
+                            <x-admin.icon.hashtag class="w-4 h-4" />
+                            Categories
+                        </a>
+                    @endcan
+                </div>
+            </div>
+        @endcanany
 
         @can('media.view')
             <x-admin.layouts.sidebar-link 
                 :href="route('admin.media.index')" 
                 :active="request()->routeIs('admin.media.*')" 
                 title="Media Library"
-                x-show="'media files assets content library gallery upload'.includes(searchMenu.toLowerCase())">
-                {{-- Icon Collection/Folder --}}
+                x-show="'media files assets content library gallery upload image video'.includes(searchMenu.toLowerCase())">
                 <x-admin.icon.collection class="w-5 h-5" />
             </x-admin.layouts.sidebar-link>
         @endcan
 
-        {{-- GROUP: SYSTEM --}}
+        @can('menus.view')
+            <x-admin.layouts.sidebar-link 
+                :href="route('admin.menus.index')" 
+                :active="request()->routeIs('admin.menus.*')" 
+                title="Menu Manager"
+                x-show="'menu navbar navigation builder link structure'.includes(searchMenu.toLowerCase())">
+                <x-admin.icon.menu class="w-5 h-5" />
+            </x-admin.layouts.sidebar-link>
+        @endcan
+
+        {{-- ==================================================== --}}
+        {{-- GROUP: SYSTEM & ACCOUNT --}}
+        {{-- ==================================================== --}}
         <div class="pt-6 mb-2 px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest"
-            x-show="'activity logs system history audit settings general backups restore database health server status'.includes(searchMenu.toLowerCase())">
-            System Administration
+            x-show="'activity logs system history audit settings general backups restore database health server status account profile'.includes(searchMenu.toLowerCase())">
+            System & Account
         </div>
         
-        {{-- MENU: SYSTEM HEALTH (BARU) --}}
         @can('system.view_logs')
             <x-admin.layouts.sidebar-link 
                 :href="route('admin.system.index')" 
                 :active="request()->routeIs('admin.system.*')" 
                 title="System Health"
-                x-show="'system health server status disk database cpu'.includes(searchMenu.toLowerCase())">
-                {{-- Panggil icon yang baru kita buat --}}
+                x-show="'system health server status disk database cpu info'.includes(searchMenu.toLowerCase())">
                 <x-admin.icon.chip class="w-5 h-5" />
             </x-admin.layouts.sidebar-link>
         @endcan
@@ -235,18 +279,17 @@
                 :href="route('admin.logs.index')" 
                 :active="request()->routeIs('admin.logs.*')" 
                 title="Activity Logs"
-                x-show="'activity logs system history audit'.includes(searchMenu.toLowerCase())">
+                x-show="'activity logs system history audit track'.includes(searchMenu.toLowerCase())">
                 <x-admin.icon.activity class="w-5 h-5" />
             </x-admin.layouts.sidebar-link>
         @endcan
 
-        {{-- NEW: BACKUPS (Hanya Super Admin biasanya) --}}
         @if(auth()->user()->hasRole('Super Admin')) 
             <x-admin.layouts.sidebar-link 
                 :href="route('admin.backups.index')" 
                 :active="request()->routeIs('admin.backups.*')" 
                 title="Backups & Restore"
-                x-show="'backups restore database drive cloud'.includes(searchMenu.toLowerCase())">
+                x-show="'backups restore database drive cloud dump'.includes(searchMenu.toLowerCase())">
                 <x-admin.icon.database class="w-5 h-5" />
             </x-admin.layouts.sidebar-link>
         @endif
@@ -261,16 +304,30 @@
             </x-admin.layouts.sidebar-link>
         @endcan
 
+        <x-admin.layouts.sidebar-link 
+            :href="route('admin.profile.edit')" 
+            :active="request()->routeIs('admin.profile.*')" 
+            title="Profile Settings"
+            x-show="'user profile settings account password me'.includes(searchMenu.toLowerCase())">
+            <x-admin.icon.user-circle class="w-5 h-5" />
+        </x-admin.layouts.sidebar-link>
+
         {{-- EMPTY STATE SEARCH --}}
         <div x-cloak x-show="searchMenu !== '' && 
                     !'dashboard'.includes(searchMenu.toLowerCase()) && 
-                    !'users clients customers'.includes(searchMenu.toLowerCase()) && 
-                    !'employees staff internal team'.includes(searchMenu.toLowerCase()) &&
-                    !'roles permissions access security'.includes(searchMenu.toLowerCase()) &&
-                    !'profile settings account password me'.includes(searchMenu.toLowerCase()) &&
-                    !'activity logs system history audit'.includes(searchMenu.toLowerCase()) &&
-                    !'backups restore database drive cloud'.includes(searchMenu.toLowerCase()) &&
-                    !'settings general identity logo site config'.includes(searchMenu.toLowerCase())
+                    !'users clients customers members'.includes(searchMenu.toLowerCase()) && 
+                    !'employees staff internal team admin'.includes(searchMenu.toLowerCase()) &&
+                    !'roles permissions access security guard'.includes(searchMenu.toLowerCase()) &&
+                    !'inbox message contact inquiry email feedback'.includes(searchMenu.toLowerCase()) &&
+                    !'static pages seo about privacy terms landing'.includes(searchMenu.toLowerCase()) &&
+                    !'blog articles posts categories news writing editorial'.includes(searchMenu.toLowerCase()) &&
+                    !'media files assets content library gallery upload image video'.includes(searchMenu.toLowerCase()) &&
+                    !'menu navbar navigation builder link structure'.includes(searchMenu.toLowerCase()) &&
+                    !'system health server status disk database cpu info'.includes(searchMenu.toLowerCase()) &&
+                    !'activity logs system history audit track'.includes(searchMenu.toLowerCase()) &&
+                    !'backups restore database drive cloud dump'.includes(searchMenu.toLowerCase()) &&
+                    !'settings general identity logo site config'.includes(searchMenu.toLowerCase()) &&
+                    !'user profile settings account password me'.includes(searchMenu.toLowerCase())
                     "
              class="px-3 py-10 text-center flex flex-col items-center">
              <x-admin.icon.search class="w-6 h-6 text-gray-200 mb-2" />

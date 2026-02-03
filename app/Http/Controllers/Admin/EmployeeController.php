@@ -74,14 +74,14 @@ class EmployeeController extends Controller implements HasMiddleware
 
             \Mail::to($result['employee']->email)
                 ->send(new NewEmployeeCredential($result['employee'], $result['generatedPassword']));
+
+            return to_route('admin.employees.index')
+                    ->with('success', 'New employee successfully added.'); // Label Button: Create Employee
         } catch (\Throwable $e) {
             \Log::error('Error creating employee: ' . $e->getMessage());
             
             return back()->withInput()->with('error', 'Failed to create employee. Please try again.');
         }
-
-        return to_route('admin.employees.index')
-                    ->with('success', 'New employee successfully added.'); // Label Button: Create Employee
     }
 
     public function edit(
@@ -128,14 +128,14 @@ class EmployeeController extends Controller implements HasMiddleware
                     ));
                 }
             });
+
+            return to_route('admin.employees.index')
+                    ->with('success', 'Employee updated successfully.'); // Label Button: Update Employee
         } catch (\Throwable $e) {
             \Log::error('Error updating employee ID ' . $employee->id . ': ' . $e->getMessage());
 
             return back()->withInput()->with('error', 'Failed to update employee.');
         }
-
-        return to_route('admin.employees.index')
-                    ->with('success', 'Employee updated successfully.'); // Label Button: Update Employee
     }
 
     public function destroy(Employee $employee): RedirectResponse

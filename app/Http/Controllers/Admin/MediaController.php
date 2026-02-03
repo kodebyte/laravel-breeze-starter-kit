@@ -26,10 +26,10 @@ class MediaController extends Controller implements HasMiddleware
         // MAGIC OF HASFILTERS:
         // Logic search & type filter otomatis jalan di sini
         $mediaItems = Media::query()
-            ->filter($request->only(['search', 'type', 'sort', 'direction']))
-            ->latest()
-            ->paginate(24) // Grid view biasanya paginate, bukan cursorPaginate
-            ->withQueryString();
+                        ->filter($request->only(['search', 'type', 'sort', 'direction']))
+                        ->latest()
+                        ->paginate(24) // Grid view biasanya paginate, bukan cursorPaginate
+                        ->withQueryString();
 
         return view('admin.media.index', compact('mediaItems'));
     }

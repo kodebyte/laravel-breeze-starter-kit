@@ -52,6 +52,15 @@ class PermissionSeeder extends Seeder
 
             // Module: Inquiry
             'inquiries' => ['view', 'delete'],
+
+            // Module: Categories
+            'categories' => ['view', 'create', 'update', 'delete', 'restore'],
+
+            // Module: Posts
+            'posts' => ['view', 'create', 'update', 'delete', 'restore'],
+
+             // Module: Banners
+            'banners' => ['view', 'create', 'update', 'delete', 'restore'],
         ];
 
         // 3. Create Permissions Loop

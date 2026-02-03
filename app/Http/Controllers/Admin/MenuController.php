@@ -30,9 +30,9 @@ class MenuController extends Controller implements HasMiddleware
     public function index(): View
     {
         $menuItems = MenuItem::whereNull('parent_id')
-            ->orderBy('order')
-            ->with('children') 
-            ->get();
+                        ->orderBy('order')
+                        ->with('children') 
+                        ->get();
 
         $pages = Page::orderBy('name')->get();
 
