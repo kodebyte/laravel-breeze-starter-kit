@@ -1,33 +1,71 @@
 <?php
 
 use App\Http\Controllers\Admin as Admin;
+use Laravel\Fortify\Http\Controllers\ConfirmablePasswordController;
+use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticatedSessionController;
+use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticationController;
+use Laravel\Fortify\Http\Controllers\TwoFactorQrCodeController;
+use Laravel\Fortify\Http\Controllers\ConfirmedTwoFactorAuthenticationController; // <--- INI BUAT CONFIRMATION
+use Laravel\Fortify\Http\Controllers\RecoveryCodeController;
 
 // --- GUEST ROUTES (Belum Login) ---
+// tanpa group naming
 Route::middleware('guest:employee')->group(function () {
     
     // UBAH DISINI: Ganti 'login' jadi '/'
     // Pas akses /internal/ dia langsung render halaman login
     Route::get('/', [Admin\Auth\AuthenticatedSessionController::class, 'create'])
-        ->name('login');
+        ->name('admin.login');
 
     // Action POST login-nya kita samain aja ke '/' biar rapi, atau tetap 'login' bebas.
     // Disini gue set ke 'login' biar URL actionnya tetep jelas (POST /internal/login)
     Route::post('login', [Admin\Auth\AuthenticatedSessionController::class, 'store'])
-        ->name('login.store');
+        ->name('admin.login.store');
+
+    Route::get('/two-factor-challenge', [TwoFactorAuthenticatedSessionController::class, 'create'])
+        ->name('two-factor.login');
+        
+    Route::post('/two-factor-challenge', [TwoFactorAuthenticatedSessionController::class, 'store']);
 });
 
-Route::middleware(['auth:employee', 'force.change.password'])->group(function () {
+Route::name('admin.')->middleware(['auth:employee', 'force.change.password'])->group(function () {
     Route::get('/force-password-change', [Admin\ProfileController::class, 'forceChangeIndex'])->name('force-password-change.index');
     Route::post('/force-password-change', [Admin\ProfileController::class, 'forceChangeUpdate'])->name('force-password-change.update');
 });
 
 // --- AUTHENTICATED ROUTES (Sudah Login) ---
-Route::middleware(['auth:employee', 'force.change.password'])->group(function () {
+Route::name('admin.')->middleware(['auth:employee', 'force.change.password'])->group(function () {
     Route::get('/dashboard', Admin\DashboardController::class)
         ->name('dashboard');
 
     Route::post('/logout', [Admin\Auth\AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+
+    // 2FA Settings (Enable/Disable)
+    Route::post('/two-factor-authentication', [TwoFactorAuthenticationController::class, 'store'])
+        ->name('two-factor.enable');
+        
+    Route::delete('/two-factor-authentication', [TwoFactorAuthenticationController::class, 'destroy'])
+        ->name('two-factor.disable');
+
+    // 2FA Confirmation (Masukin kode OTP pertama kali)
+    Route::post('/two-factor-authentication-confirmed', [ConfirmedTwoFactorAuthenticationController::class, 'store'])
+        ->name('two-factor.confirmed');
+
+    // QR Code Data (Untuk nampilin SVG)
+    Route::get('/two-factor-qr-code', [TwoFactorQrCodeController::class, 'show'])
+        ->name('two-factor.qr-code');
+
+    // Recovery Codes (Cuma butuh POST untuk Regenerate)
+    // Class-nya pakai RecoveryCodeController
+    Route::post('/two-factor-recovery-codes', [RecoveryCodeController::class, 'store'])
+        ->name('two-factor.recovery-codes');
+
+    // Confirm Password
+    Route::get('/confirm-password', [ConfirmablePasswordController::class, 'show'])
+        ->name('password.confirm');
+        
+    Route::post('/confirm-password', [ConfirmablePasswordController::class, 'store']);
 
     Route::get('/logs', [Admin\ActivityLogController::class, 'index'])->name('logs.index');
     Route::get('/logs/{id}', [Admin\ActivityLogController::class, 'show'])->name('logs.show');

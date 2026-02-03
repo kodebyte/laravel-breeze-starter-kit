@@ -13,7 +13,6 @@ return Application::configure(basePath: dirname(__DIR__))
         then: function () {
             Route::middleware('web')
                 ->prefix('internal') // Prefix URL: domain.com/internal/...
-                ->name('admin.')     // Prefix Name: route('admin.dashboard')
                 ->group(base_path('routes/admin.php'));
         },
     )

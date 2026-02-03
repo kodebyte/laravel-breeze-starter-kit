@@ -3,48 +3,66 @@
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Auth\LoginRequest; // <-- Pakai Request yang baru kita buat
-use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
+use Illuminate\Routing\Pipeline; // <--- PENTING
+
+// Import Action Fortify (Logic "Pipa")
+use Laravel\Fortify\Actions\EnsureLoginIsNotThrottled;
+use Laravel\Fortify\Actions\CanonicalizeUsername;
+use Laravel\Fortify\Actions\RedirectIfTwoFactorAuthenticatable;
+use Laravel\Fortify\Actions\AttemptToAuthenticate;
+use Laravel\Fortify\Actions\PrepareAuthenticatedSession;
+use Laravel\Fortify\Features;
+use Laravel\Fortify\Fortify;
+use App\Http\Responses\LoginResponse; // Response custom kita tadi
 
 class AuthenticatedSessionController extends Controller
 {
     /**
      * Display the login view.
      */
-    public function create(): View
+    public function create()
     {
-        // Return view login khusus admin
         return view('admin.auth.login');
     }
 
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request)
     {
-        $request->authenticate();
+        // Logic Lama (Breeze) -> HAPUS ATAU COMMENT
+        // $request->authenticate();
+        // $request->session()->regenerate();
+        // return redirect()->intended(route('admin.dashboard', absolute: false));
 
-        $request->session()->regenerate();
-
-        // Redirect ke dashboard admin
-        return redirect()->intended(route('admin.dashboard'));
+        // ==========================================
+        // LOGIC BARU (FORTIFY PIPELINE) 🔥
+        // ==========================================
+        return (new Pipeline(app()))->send($request)->through(array_filter([
+            config('fortify.limiters.login') ? null : EnsureLoginIsNotThrottled::class,
+            Features::enabled(Features::twoFactorAuthentication()) ? RedirectIfTwoFactorAuthenticatable::class : null,
+            AttemptToAuthenticate::class,
+            PrepareAuthenticatedSession::class,
+        ]))->then(function ($request) {
+            // Kalau lolos semua pipa (password bener & gak butuh 2FA),
+            // atau user udah sukses input 2FA, maka login sukses.
+            return app(LoginResponse::class);
+        });
     }
 
     /**
      * Destroy an authenticated session.
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request)
     {
-        // Logout khusus guard employee
         Auth::guard('employee')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // Balik ke halaman login admin
-        return redirect()->route('admin.login');
+        return to_route('admin.login');
     }
 }
