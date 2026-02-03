@@ -37,13 +37,13 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        {{-- Nama Indonesia --}}
-                        <x-admin.form.group label="Name (Bahasa Indonesia)" name="name_id" required>
+                        {{-- FIX: name="name[id]" biar error validasi name.id muncul --}}
+                        <x-admin.form.group label="Name (Bahasa Indonesia)" name="name[id]" required>
                             <x-admin.form.input name="name[id]" :value="old('name.id')" placeholder="Contoh: Teknologi" required autofocus />
                         </x-admin.form.group>
 
-                        {{-- Nama Inggris --}}
-                        <x-admin.form.group label="Name (English)" name="name_en">
+                        {{-- FIX: name="name[en]" --}}
+                        <x-admin.form.group label="Name (English)" name="name[en]">
                             <x-admin.form.input name="name[en]" :value="old('name.en')" placeholder="Ex: Technology" />
                         </x-admin.form.group>
                     </div>

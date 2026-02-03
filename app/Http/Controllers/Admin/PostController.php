@@ -8,17 +8,22 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Http\Requests\Admin\Post\StorePostRequest;
 use App\Http\Requests\Admin\Post\UpdatePostRequest;
+use App\Services\ImageUploadService; // <--- Import Service
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class PostController extends Controller implements HasMiddleware
 {
+    // Inject Service via Constructor
+    public function __construct(
+        protected ImageUploadService $imageService
+    ) {}
+
     public static function middleware(): array
     {
         return [
@@ -56,9 +61,10 @@ class PostController extends Controller implements HasMiddleware
         try {
             $data = $request->validated();
             
-            // 1. Handle Image Upload
+            // 1. Handle Image Upload (Auto WebP via Service)
             if ($request->hasFile('image')) {
-                $data['image'] = $request->file('image')->store('posts', 'public');
+                // Upload ke folder 'posts', resize width 1200px (opsional, sesuaikan kebutuhan)
+                $data['image'] = $this->imageService->upload($request->file('image'), 'posts', 1200);
             }
 
             // 2. Assign Author (Employee ID dari User yang login)
@@ -90,12 +96,13 @@ class PostController extends Controller implements HasMiddleware
         try {
             $data = $request->validated();
 
-            // 1. Handle Image Upload (Delete old if exists)
+            // 1. Handle Image Upload (Auto WebP via Service)
             if ($request->hasFile('image')) {
-                if ($post->image) {
-                    Storage::disk('public')->delete($post->image);
-                }
-                $data['image'] = $request->file('image')->store('posts', 'public');
+                // Delete old image using service
+                $this->imageService->delete($post->image);
+                
+                // Upload new image
+                $data['image'] = $this->imageService->upload($request->file('image'), 'posts', 1200);
             }
 
             // 2. Manual Slug override
@@ -118,10 +125,8 @@ class PostController extends Controller implements HasMiddleware
     public function destroy(Post $post): RedirectResponse
     {
         try {
-            // Delete Image
-            if ($post->image) {
-                Storage::disk('public')->delete($post->image);
-            }
+            // Delete Image using Service
+            $this->imageService->delete($post->image);
 
             $post->delete();
 

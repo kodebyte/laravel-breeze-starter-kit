@@ -38,11 +38,13 @@
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <x-admin.form.group label="Name (Bahasa Indonesia)" name="name_id" required>
+                            {{-- FIX: name="name[id]" --}}
+                            <x-admin.form.group label="Name (Bahasa Indonesia)" name="name[id]" required>
                                 <x-admin.form.input name="name[id]" :value="old('name.id', $category->getTranslation('name', 'id'))" required />
                             </x-admin.form.group>
 
-                            <x-admin.form.group label="Name (English)" name="name_en">
+                            {{-- FIX: name="name[en]" --}}
+                            <x-admin.form.group label="Name (English)" name="name[en]">
                                 <x-admin.form.input name="name[en]" :value="old('name.en', $category->getTranslation('name', 'en'))" />
                             </x-admin.form.group>
                         </div>

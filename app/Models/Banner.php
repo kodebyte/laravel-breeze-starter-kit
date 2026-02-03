@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\Translatable\HasTranslations;
 
 class Banner extends Model
 {
+    use HasTranslations;
+
     protected $fillable = [
         'zone', 'type', 
         'image_desktop', 'image_mobile', 'video_path',
@@ -16,6 +19,12 @@ class Banner extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+    ];
+
+    public $translatable = [
+        'title', 
+        'subtitle', 
+        'cta_text', 
     ];
 
     /**

@@ -30,9 +30,15 @@ class UpdateBannerRequest extends FormRequest
             // Video (Nullable, Max 10MB)
             'video' => ['nullable', 'required_if:type,video', 'mimes:mp4', 'max:10240'], 
             
-            'title' => ['nullable', 'string', 'max:255'],
-            'subtitle' => ['nullable', 'string', 'max:500'],
-            'cta_text' => ['nullable', 'string', 'max:50'],
+            'title.id' => ['nullable', 'string', 'max:255'],
+            'title.en' => ['nullable', 'string', 'max:255'],
+
+            'subtitle.id' => ['nullable', 'string', 'max:500'],
+            'subtitle.en' => ['nullable', 'string', 'max:500'],
+
+            'cta_text.id' => ['nullable', 'string', 'max:50'],
+            'cta_text.en' => ['nullable', 'string', 'max:50'],
+            
             'cta_url' => ['nullable', 'url', 'max:255'],
             'order' => ['nullable', 'integer'],
             'is_active' => ['boolean'],

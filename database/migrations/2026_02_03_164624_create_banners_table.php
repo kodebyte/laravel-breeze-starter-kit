@@ -24,9 +24,9 @@ return new class extends Migration
             $table->string('video_path')->nullable(); // Local MP4 Path
             
             // 3. Text Overlay
-            $table->string('title')->nullable();
-            $table->string('subtitle')->nullable();
-            $table->string('cta_text')->nullable();
+            $table->json('title')->nullable();
+            $table->json('subtitle')->nullable();
+            $table->json('cta_text')->nullable();
             $table->string('cta_url')->nullable();
             
             // 4. Control

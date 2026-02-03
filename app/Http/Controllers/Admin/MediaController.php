@@ -45,7 +45,7 @@ class MediaController extends Controller implements HasMiddleware
 
             // Redirect Balik (Bukan JSON)
             return to_route('admin.media.index')
-                ->with('success', 'File uploaded successfully.');
+                    ->with('success', 'File uploaded successfully.');
 
         } catch (\Throwable $e) {
             \Log::error('Error uploading media: ' . $e->getMessage());

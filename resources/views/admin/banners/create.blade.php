@@ -167,24 +167,55 @@
                         <h3 class="font-bold text-gray-900">Text Overlay</h3>
                     </div>
 
-                    <div class="space-y-4">
-                        <x-admin.form.group label="Title" name="title">
-                            <x-admin.form.input name="title" placeholder="Big Promo Title..." />
-                        </x-admin.form.group>
+                    {{-- 1. BAGIAN MULTI-BAHASA --}}
+                    <x-admin.ui.tab-language>
                         
-                        <x-admin.form.group label="Subtitle" name="subtitle">
-                            <x-admin.form.textarea name="subtitle" rows="2" placeholder="Short description..." />
-                        </x-admin.form.group>
+                        {{-- Slot ID --}}
+                        <x-slot name="idContent">
+                            <x-admin.form.group label="Title (ID)" name="title[id]">
+                                <x-admin.form.input name="title[id]" :value="old('title.id')" placeholder="Judul Promo..." />
+                            </x-admin.form.group>
+                            
+                            <x-admin.form.group label="Subtitle (ID)" name="subtitle[id]">
+                                <x-admin.form.textarea name="subtitle[id]" rows="2" placeholder="Deskripsi singkat...">{{ old('subtitle.id') }}</x-admin.form.textarea>
+                            </x-admin.form.group>
 
-                        <div class="grid grid-cols-2 gap-3">
-                            <x-admin.form.group label="Button Text" name="cta_text">
-                                <x-admin.form.input name="cta_text" placeholder="e.g. Shop Now" />
+                            <x-admin.form.group label="Button Text (ID)" name="cta_text[id]">
+                                <x-admin.form.input name="cta_text[id]" :value="old('cta_text.id')" placeholder="Cth: Beli Sekarang" />
                             </x-admin.form.group>
-                            <x-admin.form.group label="Button URL" name="cta_url">
-                                <x-admin.form.input name="cta_url" placeholder="https://..." />
+                        </x-slot>
+
+                        {{-- Slot EN --}}
+                        <x-slot name="enContent">
+                            <x-admin.form.group label="Title (EN)" name="title[en]">
+                                <x-admin.form.input name="title[en]" :value="old('title.en')" placeholder="Promo Title..." />
                             </x-admin.form.group>
+                            
+                            <x-admin.form.group label="Subtitle (EN)" name="subtitle[en]">
+                                <x-admin.form.textarea name="subtitle[en]" rows="2" placeholder="Short description...">{{ old('subtitle.en') }}</x-admin.form.textarea>
+                            </x-admin.form.group>
+
+                            <x-admin.form.group label="Button Text (EN)" name="cta_text[en]">
+                                <x-admin.form.input name="cta_text[en]" :value="old('cta_text.en')" placeholder="e.g. Shop Now" />
+                            </x-admin.form.group>
+                        </x-slot>
+
+                    </x-admin.ui.tab-language>
+
+                    {{-- DIVIDER --}}
+                    <div class="border-t border-gray-100 my-5"></div>
+
+                    {{-- 2. BAGIAN GLOBAL (URL) --}}
+                    <x-admin.form.group label="Destination URL (Global)" name="cta_url">
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                            </div>
+                            <x-admin.form.input name="cta_url" :value="old('cta_url')" class="pl-10" placeholder="https://example.com/promo-page" />
                         </div>
-                    </div>
+                        <p class="text-[10px] text-gray-400 mt-1">This link applies to all languages.</p>
+                    </x-admin.form.group>
+
                 </div>
 
             </div>

@@ -38,34 +38,35 @@
                     <x-admin.ui.tab-language>
                         {{-- Slot ID --}}
                         <x-slot name="idContent">
-                            <x-admin.form.group label="Title (ID)" name="title_id" required>
+                            {{-- FIX: name="title[id]" --}}
+                            <x-admin.form.group label="Title (ID)" name="title[id]" required>
                                 <x-admin.form.input name="title[id]" :value="old('title.id', $post->getTranslation('title', 'id'))" class="font-bold text-lg" required />
                             </x-admin.form.group>
                             
-                            <x-admin.form.group label="Excerpt (ID)" name="excerpt_id">
+                            <x-admin.form.group label="Excerpt (ID)" name="excerpt[id]">
                                 <x-admin.form.textarea name="excerpt[id]" rows="3">{{ old('excerpt.id', $post->getTranslation('excerpt', 'id')) }}</x-admin.form.textarea>
                             </x-admin.form.group>
 
                             <div class="border-t border-gray-100 my-4"></div>
 
-                            <x-admin.form.group label="Content (ID)" name="content_id" required>
+                            <x-admin.form.group label="Content (ID)" name="content[id]" required>
                                 <textarea id="editor_id" name="content[id]" class="tinymce">{{ old('content.id', $post->getTranslation('content', 'id')) }}</textarea>
                             </x-admin.form.group>
                         </x-slot>
 
                         {{-- Slot EN --}}
                         <x-slot name="enContent">
-                            <x-admin.form.group label="Title (EN)" name="title_en">
+                            <x-admin.form.group label="Title (EN)" name="title[en]">
                                 <x-admin.form.input name="title[en]" :value="old('title.en', $post->getTranslation('title', 'en'))" class="font-bold text-lg" />
                             </x-admin.form.group>
                             
-                            <x-admin.form.group label="Excerpt (EN)" name="excerpt_en">
+                            <x-admin.form.group label="Excerpt (EN)" name="excerpt[en]">
                                 <x-admin.form.textarea name="excerpt[en]" rows="3">{{ old('excerpt.en', $post->getTranslation('excerpt', 'en')) }}</x-admin.form.textarea>
                             </x-admin.form.group>
 
                             <div class="border-t border-gray-100 my-4"></div>
 
-                            <x-admin.form.group label="Content (EN)" name="content_en">
+                            <x-admin.form.group label="Content (EN)" name="content[en]">
                                 <textarea id="editor_en" name="content[en]" class="tinymce">{{ old('content.en', $post->getTranslation('content', 'en')) }}</textarea>
                             </x-admin.form.group>
                         </x-slot>
@@ -73,7 +74,7 @@
                 </div>
 
                 {{-- SEO SECTION (Inject Model) --}}
-                <x-admin.form.seo-section :model="$post" />
+                <x-admin.form.seo-section :model="$post" :show_robots="false" />
 
             </div>
 
@@ -168,8 +169,6 @@
     </form>
     
     @push('scripts')
-        {{-- Panggil Component Script TinyMCE --}}
-        {{-- Kita oper ID textareanya kesini --}}
         <x-admin.scripts.tinymce selector="#editor_id, #editor_en" />
     @endpush
     

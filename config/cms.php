@@ -30,4 +30,16 @@ return [
             'allowed_types' => ['image'],
         ],
     ],
+
+    'locale' => [
+        // Bahasa apa yang pertama kali muncul / aktif?
+        // Ambil dari .env APP_LOCALE, fallback ke 'id'
+        'default' => env('APP_LOCALE', 'id'), 
+
+        // List bahasa yang di-support sistem
+        'languages' => [
+            'id' => ['name' => 'Bahasa Indonesia', 'flag' => '🇮🇩'],
+            'en' => ['name' => 'English', 'flag' => '🇺🇸'],
+        ],
+    ],
 ];

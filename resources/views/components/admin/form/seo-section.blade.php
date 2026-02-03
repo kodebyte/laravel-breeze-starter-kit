@@ -52,20 +52,26 @@
             <x-admin.ui.tab-language>
                 {{-- Slot ID --}}
                 <x-slot name="idContent">
-                    <x-admin.form.group label="Meta Title (ID)" name="seo_title_id">
+                    {{-- FIX: name="seo[title][id]" --}}
+                    <x-admin.form.group label="Meta Title (ID)" name="seo[title][id]">
                         <x-admin.form.input name="seo[title][id]" :value="old('seo.title.id', $seo?->getTranslation('title', 'id') ?? '')" placeholder="{{ $model->title ?? 'Judul halaman...' }}" />
                     </x-admin.form.group>
-                    <x-admin.form.group label="Meta Description (ID)" name="seo_description_id">
+                    
+                    {{-- FIX: name="seo[description][id]" --}}
+                    <x-admin.form.group label="Meta Description (ID)" name="seo[description][id]">
                         <x-admin.form.textarea name="seo[description][id]" rows="3" placeholder="Deskripsi untuk Google...">{{ old('seo.description.id', $seo?->getTranslation('description', 'id') ?? '') }}</x-admin.form.textarea>
                     </x-admin.form.group>
                 </x-slot>
 
                 {{-- Slot EN --}}
                 <x-slot name="enContent">
-                    <x-admin.form.group label="Meta Title (EN)" name="seo_title_en">
+                    {{-- FIX: name="seo[title][en]" --}}
+                    <x-admin.form.group label="Meta Title (EN)" name="seo[title][en]">
                         <x-admin.form.input name="seo[title][en]" :value="old('seo.title.en', $seo?->getTranslation('title', 'en') ?? '')" placeholder="{{ $model->title ?? 'Page title...' }}" />
                     </x-admin.form.group>
-                    <x-admin.form.group label="Meta Description (EN)" name="seo_description_en">
+                    
+                    {{-- FIX: name="seo[description][en]" --}}
+                    <x-admin.form.group label="Meta Description (EN)" name="seo[description][en]">
                         <x-admin.form.textarea name="seo[description][en]" rows="3" placeholder="Description for Google...">{{ old('seo.description.en', $seo?->getTranslation('description', 'en') ?? '') }}</x-admin.form.textarea>
                     </x-admin.form.group>
                 </x-slot>
@@ -73,9 +79,10 @@
 
             <div class="border-t border-gray-100 pt-6 space-y-6">
                 
-                {{-- ROBOTS (Horizontal Layout / Kiri-Kanan) --}}
+                {{-- ROBOTS --}}
                 @if($show_robots)
-                    <x-admin.form.group label="Crawling & Indexing" name="seo_robots">
+                    {{-- FIX: name="seo[robots]" --}}
+                    <x-admin.form.group label="Crawling & Indexing" name="seo[robots]">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             {{-- Option 1: Index --}}
                             <label class="relative flex items-start p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-all has-[:checked]:border-green-500 has-[:checked]:bg-green-50 has-[:checked]:ring-1 has-[:checked]:ring-green-500">
@@ -106,8 +113,9 @@
                     </x-admin.form.group>
                 @endif
 
-                {{-- CANONICAL (Full Width - Biar kelihatan jelas) --}}
-                <x-admin.form.group label="Canonical URL (Optional)" name="seo_canonical_url">
+                {{-- CANONICAL --}}
+                {{-- FIX: name="seo[canonical_url]" --}}
+                <x-admin.form.group label="Canonical URL (Optional)" name="seo[canonical_url]">
                      <x-admin.form.input id="seo_canonical_url" name="seo[canonical_url]" type="url" 
                         :value="old('seo.canonical_url', $seo->canonical_url ?? '')" 
                         placeholder="https://example.com/original-page-url" />
@@ -123,6 +131,7 @@
                 
                 {{-- Form Upload (Drag & Drop) --}}
                 <div class="flex-1 space-y-4">
+                    {{-- Note: name="seo_image" sudah benar karena inputnya seo_image (bukan array) --}}
                     <x-admin.form.group label="Social Share Image (OG Image)" name="seo_image">
                         <div class="relative group">
                             <div class="border-2 border-dashed border-gray-200 rounded-lg p-6 text-center hover:bg-gray-50 transition-colors relative cursor-pointer">

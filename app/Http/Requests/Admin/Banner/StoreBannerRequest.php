@@ -32,7 +32,15 @@ class StoreBannerRequest extends FormRequest
             // Validasi Video (Wajib jika type=video)
             'video' => ['nullable', 'required_if:type,video', 'mimes:mp4', 'max:10240'], // Max 10MB
             
-            'title' => ['nullable', 'string', 'max:255'],
+            'title.id' => ['nullable', 'string', 'max:255'],
+            'title.en' => ['nullable', 'string', 'max:255'],
+
+            'subtitle.id' => ['nullable', 'string', 'max:500'],
+            'subtitle.en' => ['nullable', 'string', 'max:500'],
+
+            'cta_text.id' => ['nullable', 'string', 'max:50'],
+            'cta_text.en' => ['nullable', 'string', 'max:50'],
+            
             'cta_url' => ['nullable', 'url'],
             'order' => ['nullable', 'integer'],
             'is_active' => ['boolean'],
